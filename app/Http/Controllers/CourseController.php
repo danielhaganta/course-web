@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\CourseSectionResource;
 use App\Models\Course;
-use App\Models\Lesson;
-use App\Models\Section;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -33,20 +32,14 @@ class CourseController extends Controller
 
         $course->load('sections.lessons');
 
-        // Hanya kolom untuk tampilan. bunny_video_id, content, dan attachment tidak boleh terkirim.
         return Inertia::render('courses/show', [
             'course' => [
-                ...$course->only(['title', 'summary', 'thumbnail_url']),
+                ...$course->only(['title', 'slug', 'summary', 'thumbnail_url']),
                 // Deskripsi dari rich editor, disanitasi sebelum dirender sebagai HTML
                 'description' => $course->description
                     ? RichContentRenderer::make($course->description)->toHtml()
                     : null,
-                'sections' => $course->sections->map(fn (Section $section): array => [
-                    ...$section->only(['id', 'title']),
-                    'lessons' => $section->lessons->map(fn (Lesson $lesson): array => $lesson->only([
-                        'id', 'title', 'type', 'duration_seconds', 'is_preview',
-                    ])),
-                ]),
+                'sections' => CourseSectionResource::collection($course->sections)->resolve(),
             ],
         ]);
     }

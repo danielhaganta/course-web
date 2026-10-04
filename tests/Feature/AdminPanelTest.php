@@ -9,6 +9,8 @@ use App\Models\Section;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
+use Illuminate\Http\Client\Request;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 
 test('non admin users cannot access the admin panel', function () {
@@ -71,4 +73,41 @@ test('video lesson requires a bunny video id', function () {
         ->assertHasNoFormErrors();
 
     expect($section->lessons()->sole()->type)->toBe(LessonType::Text);
+});
+
+test('video lesson duration is filled from bunny on save', function () {
+    config(['services.bunny_stream.library_id' => '123', 'services.bunny_stream.api_key' => 'api-key']);
+    Http::fake(['video.bunnycdn.com/*' => Http::response(['length' => 754])]);
+    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    $section = Section::factory()->create();
+
+    Livewire::test(LessonsRelationManager::class, ['ownerRecord' => $section, 'pageClass' => EditSection::class])
+        ->callAction(TestAction::make(CreateAction::class)->table(), [
+            'title' => 'Intro',
+            'type' => LessonType::Video,
+            'bunny_video_id' => 'video-abc',
+            'duration_seconds' => 0,
+        ])
+        ->assertHasNoFormErrors();
+
+    expect($section->lessons()->sole()->duration_seconds)->toBe(754);
+    Http::assertSent(fn (Request $request) => $request->url() === 'https://video.bunnycdn.com/library/123/videos/video-abc'
+        && $request->hasHeader('AccessKey', 'api-key'));
+});
+
+test('lesson is still saved when bunny request fails', function () {
+    Http::fake(['video.bunnycdn.com/*' => Http::response(status: 500)]);
+    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    $section = Section::factory()->create();
+
+    Livewire::test(LessonsRelationManager::class, ['ownerRecord' => $section, 'pageClass' => EditSection::class])
+        ->callAction(TestAction::make(CreateAction::class)->table(), [
+            'title' => 'Intro',
+            'type' => LessonType::Video,
+            'bunny_video_id' => 'video-abc',
+            'duration_seconds' => 120,
+        ])
+        ->assertHasNoFormErrors();
+
+    expect($section->lessons()->sole()->duration_seconds)->toBe(120);
 });

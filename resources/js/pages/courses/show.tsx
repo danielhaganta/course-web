@@ -47,6 +47,7 @@ export default function CourseShow({ course }: Props) {
                             <CourseSectionItem
                                 key={section.id}
                                 section={section}
+                                courseSlug={course.slug}
                                 defaultOpen={index === 0}
                             />
                         ))}

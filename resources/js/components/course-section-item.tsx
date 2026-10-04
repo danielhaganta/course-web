@@ -1,4 +1,5 @@
-import { ChevronDown, CirclePlay, FileText } from 'lucide-react';
+import { Link } from '@inertiajs/react';
+import { ChevronDown, CirclePlay, FileText, Lock } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import {
     Collapsible,
@@ -6,15 +7,21 @@ import {
     CollapsibleTrigger,
 } from '@/components/ui/collapsible';
 import { formatDuration, totalDuration } from '@/lib/duration';
+import { cn } from '@/lib/utils';
+import { show as showLesson } from '@/routes/lessons';
 import type { CourseSection, Lesson } from '@/types';
 
 type Props = {
     section: CourseSection;
+    courseSlug: string;
+    activeLessonId?: number;
     defaultOpen?: boolean;
 };
 
 export default function CourseSectionItem({
     section,
+    courseSlug,
+    activeLessonId,
     defaultOpen = false,
 }: Props) {
     return (
@@ -38,7 +45,12 @@ export default function CourseSectionItem({
             <CollapsibleContent>
                 <ul className="divide-y border-t">
                     {section.lessons.map((lesson) => (
-                        <LessonRow key={lesson.id} lesson={lesson} />
+                        <LessonRow
+                            key={lesson.id}
+                            lesson={lesson}
+                            courseSlug={courseSlug}
+                            isActive={lesson.id === activeLessonId}
+                        />
                     ))}
                 </ul>
             </CollapsibleContent>
@@ -46,22 +58,43 @@ export default function CourseSectionItem({
     );
 }
 
-function LessonRow({ lesson }: { lesson: Lesson }) {
+type LessonRowProps = {
+    lesson: Lesson;
+    courseSlug: string;
+    isActive: boolean;
+};
+
+function LessonRow({ lesson, courseSlug, isActive }: LessonRowProps) {
     const Icon = lesson.type === 'video' ? CirclePlay : FileText;
 
     return (
-        <li className="flex items-center gap-3 px-4 py-3 text-sm">
-            <Icon
-                className="size-4 shrink-0 text-muted-foreground"
-                aria-label={lesson.type === 'video' ? 'Video' : 'Teks'}
-            />
-            <span className="flex-1">{lesson.title}</span>
-            {lesson.is_preview && (
-                <Badge variant="secondary">Preview gratis</Badge>
-            )}
-            <span className="shrink-0 text-muted-foreground tabular-nums">
-                {formatDuration(lesson.duration_seconds)}
-            </span>
+        <li>
+            <Link
+                href={showLesson({ course: courseSlug, lesson: lesson.id })}
+                aria-current={isActive ? 'page' : undefined}
+                className={cn(
+                    'flex items-center gap-3 px-4 py-3 text-sm hover:bg-accent',
+                    isActive && 'bg-accent font-medium',
+                )}
+            >
+                <Icon
+                    className="size-4 shrink-0 text-muted-foreground"
+                    aria-label={lesson.type === 'video' ? 'Video' : 'Teks'}
+                />
+                <span className="flex-1">{lesson.title}</span>
+                {lesson.is_preview && (
+                    <Badge variant="secondary">Preview gratis</Badge>
+                )}
+                {!lesson.can_watch && (
+                    <Lock
+                        className="size-3.5 shrink-0 text-muted-foreground"
+                        aria-label="Khusus member"
+                    />
+                )}
+                <span className="shrink-0 text-muted-foreground tabular-nums">
+                    {formatDuration(lesson.duration_seconds)}
+                </span>
+            </Link>
         </li>
     );
 }

@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 /*
@@ -16,6 +17,12 @@ use Tests\TestCase;
 
 pest()->extend(TestCase::class)
     ->use(RefreshDatabase::class)
+    ->beforeEach(function () {
+        // Test tidak boleh memanggil API eksternal (Bunny, dll) sungguhan
+        Http::preventStrayRequests();
+        // SSR mencoba menghubungi Vite dev server, tidak relevan untuk test
+        config(['inertia.ssr.enabled' => false]);
+    })
     ->in('Feature');
 
 /*

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Courses\Resources\Sections\RelationManagers;
 
 use App\Enums\LessonType;
+use App\Services\BunnyStream;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
@@ -50,7 +51,7 @@ class LessonsRelationManager extends RelationManager
                     ->required(fn (Get $get): bool => $get('type') === LessonType::Video),
                 TextInput::make('duration_seconds')
                     ->label('Durasi')
-                    ->helperText('Dalam detik')
+                    ->helperText('Dalam detik. Untuk video, terisi otomatis dari Bunny saat disimpan.')
                     ->suffix('detik')
                     ->integer()
                     ->minValue(0)
@@ -86,10 +87,12 @@ class LessonsRelationManager extends RelationManager
                     ->boolean(),
             ])
             ->headerActions([
-                CreateAction::make(),
+                CreateAction::make()
+                    ->mutateDataUsing(fn (array $data): array => $this->fillDurationFromBunny($data)),
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->mutateDataUsing(fn (array $data): array => $this->fillDurationFromBunny($data)),
                 DeleteAction::make(),
             ])
             ->toolbarActions([
@@ -97,5 +100,24 @@ class LessonsRelationManager extends RelationManager
                     DeleteBulkAction::make(),
                 ]),
             ]);
+    }
+
+    /**
+     * Gagal ambil durasi tidak boleh menggagalkan simpan, nilai lama dipertahankan.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function fillDurationFromBunny(array $data): array
+    {
+        $isVideo = in_array($data['type'] ?? null, [LessonType::Video, LessonType::Video->value], true);
+
+        if (! $isVideo || blank($data['bunny_video_id'] ?? null)) {
+            return $data;
+        }
+
+        $duration = app(BunnyStream::class)->videoDuration($data['bunny_video_id']);
+
+        return $duration ? [...$data, 'duration_seconds' => $duration] : $data;
     }
 }

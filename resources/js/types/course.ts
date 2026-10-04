@@ -6,6 +6,7 @@ export type Lesson = {
     type: LessonType;
     duration_seconds: number;
     is_preview: boolean;
+    can_watch: boolean;
 };
 
 export type CourseSection = {
@@ -24,8 +25,23 @@ export type CourseSummary = {
 
 export type CourseDetail = {
     title: string;
+    slug: string;
     summary: string | null;
     description: string | null;
     thumbnail_url: string | null;
     sections: CourseSection[];
+};
+
+export type CourseCurriculum = {
+    title: string;
+    slug: string;
+    sections: CourseSection[];
+};
+
+export type ActiveLesson = {
+    id: number;
+    title: string;
+    type: LessonType;
+    duration_seconds: number;
+    content: string | null;
 };
