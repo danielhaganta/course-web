@@ -5,11 +5,13 @@ namespace App\Models;
 use Database\Factories\CourseFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * @property int $id
@@ -18,6 +20,7 @@ use Illuminate\Support\Carbon;
  * @property string|null $summary
  * @property string|null $description
  * @property string|null $thumbnail_path
+ * @property-read string|null $thumbnail_url
  * @property bool $is_published
  * @property int $sort_order
  * @property Carbon|null $created_at
@@ -44,6 +47,16 @@ class Course extends Model
     public function lessons(): HasManyThrough
     {
         return $this->hasManyThrough(Lesson::class, Section::class);
+    }
+
+    /**
+     * @return Attribute<string|null, never>
+     */
+    protected function thumbnailUrl(): Attribute
+    {
+        return Attribute::get(fn (): ?string => $this->thumbnail_path
+            ? Storage::disk('public')->url($this->thumbnail_path)
+            : null);
     }
 
     /**
