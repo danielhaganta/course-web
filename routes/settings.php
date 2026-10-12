@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Settings\DeviceController;
 use App\Http\Controllers\Settings\ProfileController;
 use App\Http\Controllers\Settings\SecurityController;
 use Illuminate\Auth\Middleware\RequirePassword;
@@ -24,4 +25,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('user-password.update');
 
     Route::inertia('settings/appearance', 'settings/appearance')->name('appearance.edit');
+
+    Route::middleware(RequirePassword::class)->group(function () {
+        Route::get('settings/devices', [DeviceController::class, 'edit'])->name('devices.edit');
+        Route::delete('settings/devices', [DeviceController::class, 'destroyOthers'])->name('devices.destroy-others');
+        Route::delete('settings/devices/{key}', [DeviceController::class, 'destroy'])->name('devices.destroy');
+    });
 });

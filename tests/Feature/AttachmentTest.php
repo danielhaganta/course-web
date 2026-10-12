@@ -75,7 +75,8 @@ test('premium download redirects to a 10 minute temporary url on r2', function (
 
     expect($location)
         ->toStartWith("https://account.r2.cloudflarestorage.com/course-files/{$this->attachment->path}")
-        ->toContain('X-Amz-Expires=600')
+        // SDK menghitung dari jam sistem, bisa 599 kalau detik berganti saat request
+        ->toMatch('/X-Amz-Expires=(599|600)&/')
         ->toContain('response-content-disposition='.rawurlencode('attachment; filename="LUT Pack.zip"'));
 });
 

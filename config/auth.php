@@ -114,4 +114,16 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Maximum Devices
+    |--------------------------------------------------------------------------
+    |
+    | Jumlah perangkat yang boleh login bersamaan per akun member.
+    | Admin tidak dibatasi.
+    |
+    */
+
+    'max_devices' => (int) env('MAX_DEVICES', 2),
+
 ];
