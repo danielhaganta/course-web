@@ -1,11 +1,16 @@
 <?php
 
 use App\Enums\LessonType;
+use App\Filament\Resources\CoursePurchases\Pages\ManageCoursePurchases;
 use App\Filament\Resources\Courses\Pages\CreateCourse;
 use App\Filament\Resources\Courses\Resources\Sections\Pages\EditSection;
 use App\Filament\Resources\Courses\Resources\Sections\RelationManagers\LessonsRelationManager;
+use App\Filament\Resources\Subscriptions\Pages\ManageSubscriptions;
 use App\Models\Course;
+use App\Models\CoursePurchase;
+use App\Models\Plan;
 use App\Models\Section;
+use App\Models\Subscription;
 use App\Models\User;
 use Filament\Actions\CreateAction;
 use Filament\Actions\Testing\TestAction;
@@ -110,4 +115,48 @@ test('lesson is still saved when bunny request fails', function () {
         ->assertHasNoFormErrors();
 
     expect($section->lessons()->sole()->duration_seconds)->toBe(120);
+});
+
+test('admin can open membership pages', function () {
+    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    $plan = Plan::factory()->create();
+    Subscription::factory()->for($plan)->create();
+    CoursePurchase::factory()->create();
+
+    $this->get('/admin/plans')->assertOk();
+    $this->get("/admin/plans/{$plan->id}/edit")->assertOk();
+    $this->get('/admin/subscriptions')->assertOk();
+    $this->get('/admin/course-purchases')->assertOk();
+});
+
+test('manual subscription ends_at is filled from the plan duration', function () {
+    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    $member = User::factory()->create();
+    $plan = Plan::factory()->create(['duration_days' => 365]);
+
+    Livewire::test(ManageSubscriptions::class)
+        ->mountAction(CreateAction::class)
+        ->fillForm(['user_id' => $member->id, 'starts_at' => '2026-11-01 09:00:00'])
+        ->fillForm(['plan_id' => $plan->id])
+        ->assertSchemaStateSet(['ends_at' => '2027-11-01 09:00:00'])
+        ->callMountedAction()
+        ->assertHasNoFormErrors();
+
+    $subscription = $member->subscriptions()->sole();
+    expect($subscription->plan_id)->toBe($plan->id)
+        ->and($subscription->starts_at->diffInDays($subscription->ends_at))->toEqual(365.0);
+});
+
+test('admin cannot grant the same course twice to a user', function () {
+    $this->actingAs(User::factory()->create(['is_admin' => true]));
+    $purchase = CoursePurchase::factory()->create();
+
+    Livewire::test(ManageCoursePurchases::class)
+        ->callAction(CreateAction::class, [
+            'user_id' => $purchase->user_id,
+            'course_id' => $purchase->course_id,
+        ])
+        ->assertHasFormErrors(['course_id' => 'unique']);
+
+    expect(CoursePurchase::count())->toBe(1);
 });

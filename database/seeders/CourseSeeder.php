@@ -21,11 +21,13 @@ class CourseSeeder extends Seeder
             [
                 'title' => 'Color Grading Sinematik dengan DaVinci Resolve',
                 'summary' => 'Belajar mewarnai video agar terlihat seperti film, dari koreksi warna dasar sampai membuat look sendiri.',
+                'price' => 349_000,
                 'sections' => ['Dasar Koreksi Warna', 'Membuat Look Sinematik', 'Workflow dan Export'],
             ],
             [
                 'title' => 'Video Editing untuk Kreator Konten',
                 'summary' => 'Edit video YouTube dan media sosial yang rapi, cepat, dan enak ditonton.',
+                'price' => 299_000,
                 'sections' => ['Persiapan Project', 'Teknik Editing', 'Audio dan Finishing'],
             ],
         ];
@@ -35,6 +37,7 @@ class CourseSeeder extends Seeder
                 'title' => $data['title'],
                 'slug' => Str::slug($data['title']),
                 'summary' => $data['summary'],
+                'price' => $data['price'],
                 'sort_order' => $courseIndex + 1,
             ]);
 
@@ -44,12 +47,16 @@ class CourseSeeder extends Seeder
                     'sort_order' => $sectionIndex + 1,
                 ]);
 
-                $this->seedLessons($section, isFirstSection: $sectionIndex === 0);
+                $this->seedLessons(
+                    $section,
+                    isFirstSection: $sectionIndex === 0,
+                    isLastSection: $sectionIndex === array_key_last($data['sections']),
+                );
             }
         }
     }
 
-    private function seedLessons(Section $section, bool $isFirstSection): void
+    private function seedLessons(Section $section, bool $isFirstSection, bool $isLastSection): void
     {
         $lessons = Lesson::factory()
             ->for($section)
@@ -59,6 +66,11 @@ class CourseSeeder extends Seeder
                 'is_preview' => $isFirstSection && $sequence->index === 0,
             ])
             ->create();
+
+        // Materi terakhir course khusus Premium
+        if ($isLastSection) {
+            $lessons->last()->update(['is_exclusive' => true]);
+        }
 
         $lessons->random(fake()->numberBetween(1, 2))
             ->each(fn (Lesson $lesson) => LessonAttachment::factory()->for($lesson)->create());

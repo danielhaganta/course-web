@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Course;
+use App\Models\CoursePurchase;
 use App\Models\Lesson;
 use App\Models\Section;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -39,4 +40,18 @@ test('course detail does not expose private lesson data', function () {
         ->assertDontSee('bunny_video_id')
         ->assertDontSee($lesson->bunny_video_id)
         ->assertDontSee('Isi materi rahasia');
+});
+
+test('course detail shows access and price for the current user', function () {
+    $course = Course::factory()->published()->create(['price' => 299_000]);
+    $buyer = CoursePurchase::factory()->for($course)->create()->user;
+
+    $this->get(route('courses.show', $course))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('course.can_access', false)
+            ->where('course.price', 299_000));
+
+    $this->actingAs($buyer)
+        ->get(route('courses.show', $course))
+        ->assertInertia(fn (Assert $page) => $page->where('course.can_access', true));
 });

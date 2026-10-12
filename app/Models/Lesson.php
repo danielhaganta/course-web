@@ -20,11 +20,12 @@ use Illuminate\Support\Carbon;
  * @property int $duration_seconds
  * @property string|null $content
  * @property bool $is_preview
+ * @property bool $is_exclusive
  * @property int $sort_order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['section_id', 'title', 'type', 'bunny_video_id', 'duration_seconds', 'content', 'is_preview', 'sort_order'])]
+#[Fillable(['section_id', 'title', 'type', 'bunny_video_id', 'duration_seconds', 'content', 'is_preview', 'is_exclusive', 'sort_order'])]
 class Lesson extends Model
 {
     /** @use HasFactory<LessonFactory> */
@@ -56,6 +57,7 @@ class Lesson extends Model
         return [
             'type' => LessonType::class,
             'is_preview' => 'boolean',
+            'is_exclusive' => 'boolean',
         ];
     }
 }

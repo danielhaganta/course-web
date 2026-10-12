@@ -64,6 +64,9 @@ class LessonsRelationManager extends RelationManager
                 Toggle::make('is_preview')
                     ->label('Preview')
                     ->helperText('Bisa ditonton tanpa langganan'),
+                Toggle::make('is_exclusive')
+                    ->label('Exclusive')
+                    ->helperText('Hanya untuk member Premium'),
             ]);
     }
 
@@ -84,6 +87,9 @@ class LessonsRelationManager extends RelationManager
                     ->formatStateUsing(fn (int $state): string => sprintf('%d:%02d', intdiv($state, 60), $state % 60)),
                 IconColumn::make('is_preview')
                     ->label('Preview')
+                    ->boolean(),
+                IconColumn::make('is_exclusive')
+                    ->label('Exclusive')
                     ->boolean(),
             ])
             ->headerActions([

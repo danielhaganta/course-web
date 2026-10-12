@@ -19,10 +19,10 @@ class LessonController extends Controller
     {
         abort_unless($course->is_published, 404);
 
-        if (! $access->canWatchLesson($request->user(), $lesson)) {
+        if (! $access->canWatch($request->user(), $lesson)) {
             return Inertia::render('lessons/locked', [
                 'course' => $course->only(['title', 'slug']),
-                'lesson' => $lesson->only(['title']),
+                'lesson' => $lesson->only(['title', 'is_exclusive']),
             ]);
         }
 

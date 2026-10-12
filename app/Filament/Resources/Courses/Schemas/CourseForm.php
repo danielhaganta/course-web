@@ -10,6 +10,7 @@ use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
+use Filament\Support\RawJs;
 use Illuminate\Support\Str;
 
 class CourseForm
@@ -48,6 +49,14 @@ class CourseForm
                     ->image()
                     ->disk('public')
                     ->directory('courses'),
+                TextInput::make('price')
+                    ->label('Harga satuan')
+                    ->helperText('Kosongkan jika tidak dijual satuan')
+                    ->prefix('Rp')
+                    ->mask(RawJs::make("\$money(\$input, ',', '.', 0)"))
+                    ->stripCharacters('.')
+                    ->integer()
+                    ->minValue(0),
                 Toggle::make('is_published')
                     ->label('Published'),
             ]);

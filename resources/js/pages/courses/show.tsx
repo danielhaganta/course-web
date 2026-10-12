@@ -1,7 +1,10 @@
 import { Head, Link } from '@inertiajs/react';
 import CourseSectionItem from '@/components/course-section-item';
 import { Button } from '@/components/ui/button';
+import { formatRupiah } from '@/lib/currency';
 import { formatDuration, totalDuration } from '@/lib/duration';
+import { pricing } from '@/routes';
+import { show as showLesson } from '@/routes/lessons';
 import type { CourseDetail } from '@/types';
 
 type Props = {
@@ -62,10 +65,39 @@ export default function CourseShow({ course }: Props) {
                             className="aspect-video w-full rounded-lg border object-cover"
                         />
                     )}
-                    <Button asChild size="lg" className="w-full">
-                        {/* Halaman pricing dibuat nanti */}
-                        <Link href="/pricing">Lihat paket membership</Link>
-                    </Button>
+                    {course.can_access ? (
+                        lessons[0] && (
+                            <Button asChild size="lg" className="w-full">
+                                <Link
+                                    href={showLesson({
+                                        course: course.slug,
+                                        lesson: lessons[0].id,
+                                    })}
+                                >
+                                    Mulai belajar
+                                </Link>
+                            </Button>
+                        )
+                    ) : (
+                        <>
+                            <Button asChild size="lg" className="w-full">
+                                <Link href={pricing()}>
+                                    Lihat paket membership
+                                </Link>
+                            </Button>
+                            {course.price !== null && (
+                                <Button
+                                    size="lg"
+                                    variant="outline"
+                                    className="w-full"
+                                    disabled
+                                >
+                                    Beli course ini ·{' '}
+                                    {formatRupiah(course.price)}
+                                </Button>
+                            )}
+                        </>
+                    )}
                 </aside>
             </div>
         </>

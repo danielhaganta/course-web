@@ -37,6 +37,7 @@ class Section extends Model
      */
     public function lessons(): HasMany
     {
-        return $this->hasMany(Lesson::class)->orderBy('sort_order');
+        // chaperone: $lesson->section terisi tanpa query tambahan saat cek akses
+        return $this->hasMany(Lesson::class)->chaperone()->orderBy('sort_order');
     }
 }

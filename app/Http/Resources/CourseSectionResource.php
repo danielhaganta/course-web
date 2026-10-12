@@ -27,8 +27,8 @@ class CourseSectionResource extends JsonResource
             'id' => $this->id,
             'title' => $this->title,
             'lessons' => $this->lessons->map(fn (Lesson $lesson): array => [
-                ...$lesson->only(['id', 'title', 'type', 'duration_seconds', 'is_preview']),
-                'can_watch' => $access->canWatchLesson($request->user(), $lesson),
+                ...$lesson->only(['id', 'title', 'type', 'duration_seconds', 'is_preview', 'is_exclusive']),
+                'can_watch' => $access->canWatch($request->user(), $lesson),
             ]),
         ];
     }

@@ -85,6 +85,7 @@ function LessonRow({ lesson, courseSlug, isActive }: LessonRowProps) {
                 {lesson.is_preview && (
                     <Badge variant="secondary">Preview gratis</Badge>
                 )}
+                {lesson.is_exclusive && <Badge>Premium</Badge>}
                 {!lesson.can_watch && (
                     <Lock
                         className="size-3.5 shrink-0 text-muted-foreground"

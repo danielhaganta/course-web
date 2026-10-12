@@ -6,6 +6,7 @@ export type Lesson = {
     type: LessonType;
     duration_seconds: number;
     is_preview: boolean;
+    is_exclusive: boolean;
     can_watch: boolean;
 };
 
@@ -29,6 +30,9 @@ export type CourseDetail = {
     summary: string | null;
     description: string | null;
     thumbnail_url: string | null;
+    // Null = tidak dijual satuan
+    price: number | null;
+    can_access: boolean;
     sections: CourseSection[];
 };
 

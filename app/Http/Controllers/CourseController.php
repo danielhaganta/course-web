@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseSectionResource;
 use App\Models\Course;
+use App\Services\AccessService;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -26,7 +28,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function show(Course $course): Response
+    public function show(Request $request, Course $course, AccessService $access): Response
     {
         abort_unless($course->is_published, 404);
 
@@ -34,12 +36,13 @@ class CourseController extends Controller
 
         return Inertia::render('courses/show', [
             'course' => [
-                ...$course->only(['title', 'slug', 'summary', 'thumbnail_url']),
+                ...$course->only(['title', 'slug', 'summary', 'thumbnail_url', 'price']),
                 // Deskripsi dari rich editor, disanitasi sebelum dirender sebagai HTML
                 'description' => $course->description
                     ? RichContentRenderer::make($course->description)->toHtml()
                     : null,
                 'sections' => CourseSectionResource::collection($course->sections)->resolve(),
+                'can_access' => $access->canAccessCourse($request->user(), $course),
             ],
         ]);
     }

@@ -3,6 +3,7 @@
 use App\Models\Course;
 use App\Models\Lesson;
 use App\Models\Section;
+use App\Models\Subscription;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
 
@@ -106,4 +107,17 @@ test('course detail marks member lessons as locked for guests', function () {
         ->assertInertia(fn (Assert $page) => $page
             ->where('course.sections.0.lessons.0.can_watch', true)
             ->where('course.sections.0.lessons.1.can_watch', false));
+});
+
+test('standard subscriber gets the premium locked page for an exclusive lesson', function () {
+    $this->memberLesson->update(['is_exclusive' => true]);
+    $user = Subscription::factory()->create()->user;
+
+    $this->actingAs($user)
+        ->get(lessonUrl($this->course, $this->memberLesson))
+        ->assertOk()
+        ->assertInertia(fn (Assert $page) => $page
+            ->component('lessons/locked')
+            ->where('lesson.is_exclusive', true)
+            ->missing('embedUrl'));
 });

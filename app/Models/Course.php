@@ -21,12 +21,13 @@ use Illuminate\Support\Facades\Storage;
  * @property string|null $description
  * @property string|null $thumbnail_path
  * @property-read string|null $thumbnail_url
+ * @property int|null $price
  * @property bool $is_published
  * @property int $sort_order
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['title', 'slug', 'summary', 'description', 'thumbnail_path', 'is_published', 'sort_order'])]
+#[Fillable(['title', 'slug', 'summary', 'description', 'thumbnail_path', 'price', 'is_published', 'sort_order'])]
 #[RouteKey('slug')]
 class Course extends Model
 {
@@ -50,6 +51,14 @@ class Course extends Model
     }
 
     /**
+     * @return HasMany<CoursePurchase, $this>
+     */
+    public function purchases(): HasMany
+    {
+        return $this->hasMany(CoursePurchase::class);
+    }
+
+    /**
      * @return Attribute<string|null, never>
      */
     protected function thumbnailUrl(): Attribute
@@ -67,6 +76,7 @@ class Course extends Model
     protected function casts(): array
     {
         return [
+            'price' => 'integer',
             'is_published' => 'boolean',
         ];
     }
