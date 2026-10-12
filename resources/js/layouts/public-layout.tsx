@@ -2,20 +2,21 @@ import { Link, usePage } from '@inertiajs/react';
 import { Button } from '@/components/ui/button';
 import { dashboard, home, login, register } from '@/routes';
 import { index as coursesIndex } from '@/routes/courses';
+import { dashboard as adminDashboard } from '@/routes/filament/admin/pages';
 
 export default function PublicLayout({
     children,
 }: {
     children: React.ReactNode;
 }) {
-    const { auth } = usePage().props;
+    const { auth, name } = usePage().props;
 
     return (
         <div className="min-h-screen bg-background text-foreground">
             <header className="border-b">
                 <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4">
                     <Link href={home()} className="font-semibold">
-                        Course
+                        {name}
                     </Link>
                     <nav className="flex flex-1 items-center text-sm">
                         <Link
@@ -27,9 +28,19 @@ export default function PublicLayout({
                     </nav>
                     <div className="flex items-center gap-2">
                         {auth.user ? (
-                            <Button asChild size="sm">
-                                <Link href={dashboard()}>Dashboard</Link>
-                            </Button>
+                            <>
+                                {auth.user.is_admin && (
+                                    <Button asChild variant="ghost" size="sm">
+                                        {/* Panel Filament bukan halaman Inertia */}
+                                        <a href={adminDashboard.url()}>
+                                            Admin panel
+                                        </a>
+                                    </Button>
+                                )}
+                                <Button asChild size="sm">
+                                    <Link href={dashboard()}>Dashboard</Link>
+                                </Button>
+                            </>
                         ) : (
                             <>
                                 <Button asChild variant="ghost" size="sm">
