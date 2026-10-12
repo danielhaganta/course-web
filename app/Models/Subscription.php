@@ -18,10 +18,13 @@ use Illuminate\Support\Carbon;
  * @property int|null $order_id
  * @property Carbon $starts_at
  * @property Carbon $ends_at
+ * @property Carbon|null $reminder_7_days_sent_at
+ * @property Carbon|null $reminder_1_day_sent_at
+ * @property Carbon|null $ended_notice_sent_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['user_id', 'plan_id', 'order_id', 'starts_at', 'ends_at'])]
+#[Fillable(['user_id', 'plan_id', 'order_id', 'starts_at', 'ends_at', 'reminder_7_days_sent_at', 'reminder_1_day_sent_at', 'ended_notice_sent_at'])]
 class Subscription extends Model
 {
     /** @use HasFactory<SubscriptionFactory> */
@@ -72,6 +75,9 @@ class Subscription extends Model
         return [
             'starts_at' => 'datetime',
             'ends_at' => 'datetime',
+            'reminder_7_days_sent_at' => 'datetime',
+            'reminder_1_day_sent_at' => 'datetime',
+            'ended_notice_sent_at' => 'datetime',
         ];
     }
 }

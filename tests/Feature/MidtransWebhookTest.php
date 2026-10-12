@@ -6,6 +6,8 @@ use App\Models\CoursePurchase;
 use App\Models\Order;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Notifications\PaymentReceipt;
+use Illuminate\Support\Facades\Notification;
 
 beforeEach(function () {
     config(['services.midtrans.server_key' => 'server-key']);
@@ -138,4 +140,24 @@ test('notification for an unknown order still returns 200', function () {
     $this->postJson(route('webhooks.midtrans'), midtransNotification($order))->assertOk();
 
     expect(Order::count())->toBe(0);
+});
+
+test('settlement sends the payment receipt once even if the webhook arrives twice', function () {
+    Notification::fake();
+    $order = Order::factory()->create();
+    $notification = midtransNotification($order);
+
+    $this->postJson(route('webhooks.midtrans'), $notification)->assertOk();
+    $this->postJson(route('webhooks.midtrans'), $notification)->assertOk();
+
+    Notification::assertSentToTimes($order->user, PaymentReceipt::class, 1);
+});
+
+test('failed payment does not send a receipt', function () {
+    Notification::fake();
+    $order = Order::factory()->create();
+
+    $this->postJson(route('webhooks.midtrans'), midtransNotification($order, ['transaction_status' => 'deny']))->assertOk();
+
+    Notification::assertNothingSent();
 });

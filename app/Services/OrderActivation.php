@@ -7,6 +7,7 @@ use App\Models\CoursePurchase;
 use App\Models\Order;
 use App\Models\Plan;
 use App\Models\Subscription;
+use App\Notifications\PaymentReceipt;
 
 // Memberi akses setelah order dibayar. Tidak tahu apa pun soal payment gateway.
 class OrderActivation
@@ -15,16 +16,20 @@ class OrderActivation
     {
         $item = $order->purchasable;
 
-        match (true) {
-            $item instanceof Plan => $this->activatePlan($order, $item),
-            $item instanceof Course => CoursePurchase::firstOrCreate(['user_id' => $order->user_id, 'course_id' => $item->id]),
-        };
+        $subscription = $item instanceof Plan ? $this->activatePlan($order, $item) : null;
+
+        if ($item instanceof Course) {
+            CoursePurchase::firstOrCreate(['user_id' => $order->user_id, 'course_id' => $item->id]);
+        }
+
+        // activate() hanya dipanggil sekali per order (saat status berubah menjadi paid), jadi email juga sekali
+        $order->user->notify(new PaymentReceipt($order, $subscription));
     }
 
     /**
      * Plan sama yang masih aktif diperpanjang dari tanggal berakhirnya, selain itu langganan baru mulai sekarang.
      */
-    private function activatePlan(Order $order, Plan $plan): void
+    private function activatePlan(Order $order, Plan $plan): Subscription
     {
         $current = $order->user->activeSubscriptions()
             ->where('plan_id', $plan->id)
@@ -38,10 +43,10 @@ class OrderActivation
                 'order_id' => $current->order_id ?? $order->id,
             ]);
 
-            return;
+            return $current;
         }
 
-        Subscription::create([
+        return Subscription::create([
             'user_id' => $order->user_id,
             'plan_id' => $plan->id,
             'order_id' => $order->id,
