@@ -60,6 +60,34 @@ return [
             'report' => false,
         ],
 
+        'r2' => [
+            'driver' => 's3',
+            'key' => env('R2_ACCESS_KEY_ID'),
+            'secret' => env('R2_SECRET_ACCESS_KEY'),
+            'region' => 'auto',
+            'bucket' => env('R2_BUCKET'),
+            'endpoint' => env('R2_ENDPOINT'),
+            'use_path_style_endpoint' => true,
+            // Upload gagal harus error, jangan diam-diam tersimpan tanpa file
+            'throw' => true,
+            'report' => false,
+        ],
+
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Lesson Attachments
+    |--------------------------------------------------------------------------
+    |
+    | File latihan per materi. Disk harus privat: local saat development,
+    | r2 di production. Batas ukuran upload dalam MB.
+    |
+    */
+
+    'attachments' => [
+        'disk' => env('ATTACHMENT_DISK', 'local'),
+        'max_size_mb' => (int) env('ATTACHMENT_MAX_SIZE_MB', 2048),
     ],
 
     /*

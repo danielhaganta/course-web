@@ -3,12 +3,15 @@
 namespace App\Filament\Resources\Courses\Resources\Sections\RelationManagers;
 
 use App\Enums\LessonType;
+use App\Models\LessonAttachment;
 use App\Services\BunnyStream;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -19,6 +22,11 @@ use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
+use RuntimeException;
 
 class LessonsRelationManager extends RelationManager
 {
@@ -67,7 +75,66 @@ class LessonsRelationManager extends RelationManager
                 Toggle::make('is_exclusive')
                     ->label('Exclusive')
                     ->helperText('Hanya untuk member Premium'),
+                Repeater::make('attachments')
+                    ->label('File latihan')
+                    ->relationship()
+                    ->addActionLabel('Tambah file')
+                    ->defaultItems(0)
+                    ->columns(2)
+                    ->columnSpanFull()
+                    ->schema([
+                        FileUpload::make('path')
+                            ->label('File')
+                            ->disk(LessonAttachment::diskName())
+                            ->visibility('private')
+                            ->maxSize(Config::integer('filesystems.attachments.max_size_mb') * 1024)
+                            // Disimpan manual setelah lesson punya id, lihat storeAttachment()
+                            ->storeFiles(false)
+                            ->previewable(false)
+                            ->required(),
+                        TextInput::make('name')
+                            ->label('Nama tampil')
+                            ->helperText('Kosongkan untuk memakai nama file asli.')
+                            ->maxLength(255),
+                    ])
+                    ->mutateRelationshipDataBeforeCreateUsing(fn (array $data, Repeater $component): array => $this->storeAttachment($data, $component))
+                    ->mutateRelationshipDataBeforeSaveUsing(fn (array $data, Repeater $component): array => $this->storeAttachment($data, $component)),
             ]);
+    }
+
+    /**
+     * File baru disimpan di folder per lesson, size_bytes dan nama diisi dari file asli.
+     *
+     * @param  array<string, mixed>  $data
+     * @return array<string, mixed>
+     */
+    private function storeAttachment(array $data, Repeater $component): array
+    {
+        $file = Arr::first(Arr::wrap($data['path'] ?? null));
+
+        if (blank($data['name'] ?? null)) {
+            unset($data['name']);
+        }
+
+        if (! $file instanceof TemporaryUploadedFile) {
+            return [...$data, 'path' => $file];
+        }
+
+        $lessonId = $component->getRelationship()->getParent()->getKey();
+        $extension = $file->getClientOriginalExtension();
+        $attributes = [
+            'name' => $file->getClientOriginalName(),
+            ...$data,
+            'path' => $file->storeAs(
+                "lessons/{$lessonId}",
+                Str::random(40).($extension === '' ? '' : ".{$extension}"),
+                LessonAttachment::diskName(),
+            ) ?: throw new RuntimeException('Gagal menyimpan file latihan.'),
+            'size_bytes' => $file->getSize(),
+        ];
+        $file->delete();
+
+        return $attributes;
     }
 
     public function table(Table $table): Table

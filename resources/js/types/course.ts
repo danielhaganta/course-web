@@ -42,6 +42,12 @@ export type CourseCurriculum = {
     sections: CourseSection[];
 };
 
+export type LessonAttachment = {
+    id: number;
+    name: string;
+    size_bytes: number;
+};
+
 export type ActiveLesson = {
     id: number;
     title: string;

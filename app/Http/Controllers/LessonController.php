@@ -6,6 +6,7 @@ use App\Enums\LessonType;
 use App\Http\Resources\CourseSectionResource;
 use App\Models\Course;
 use App\Models\Lesson;
+use App\Models\LessonAttachment;
 use App\Services\AccessService;
 use App\Services\BunnyStream;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
@@ -44,6 +45,11 @@ class LessonController extends Controller
                 ? $bunny->embedUrl($lesson->bunny_video_id)
                 : null,
             'watermark' => $request->user()?->email,
+            // Path file di storage tidak pernah dikirim
+            'attachments' => $lesson->attachments->map(fn (LessonAttachment $attachment): array => $attachment->only([
+                'id', 'name', 'size_bytes',
+            ])),
+            'canDownload' => $access->canDownload($request->user(), $lesson),
         ]);
     }
 }

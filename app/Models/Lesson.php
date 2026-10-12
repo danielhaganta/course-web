@@ -60,4 +60,10 @@ class Lesson extends Model
             'is_exclusive' => 'boolean',
         ];
     }
+
+    protected static function booted(): void
+    {
+        // Hapus lewat model supaya file attachment di storage ikut terhapus, bukan cascade DB saja
+        static::deleting(fn (self $lesson) => $lesson->attachments->each->delete());
+    }
 }

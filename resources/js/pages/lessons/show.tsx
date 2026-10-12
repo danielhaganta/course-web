@@ -1,17 +1,25 @@
 import { Head, Link } from '@inertiajs/react';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import CourseSectionItem from '@/components/course-section-item';
+import LessonAttachments from '@/components/lesson-attachments';
 import { Button } from '@/components/ui/button';
 import VideoPlayer from '@/components/video-player';
 import { show as showCourse } from '@/routes/courses';
 import { show as showLesson } from '@/routes/lessons';
-import type { ActiveLesson, CourseCurriculum, Lesson } from '@/types';
+import type {
+    ActiveLesson,
+    CourseCurriculum,
+    Lesson,
+    LessonAttachment,
+} from '@/types';
 
 type Props = {
     course: CourseCurriculum;
     lesson: ActiveLesson;
     embedUrl: string | null;
     watermark: string | null;
+    attachments: LessonAttachment[];
+    canDownload: boolean;
 };
 
 export default function LessonShow({
@@ -19,6 +27,8 @@ export default function LessonShow({
     lesson,
     embedUrl,
     watermark,
+    attachments,
+    canDownload,
 }: Props) {
     const lessons = course.sections.flatMap((section) => section.lessons);
     const activeIndex = lessons.findIndex((item) => item.id === lesson.id);
@@ -60,6 +70,11 @@ export default function LessonShow({
                             direction="next"
                         />
                     </nav>
+
+                    <LessonAttachments
+                        attachments={attachments}
+                        canDownload={canDownload}
+                    />
                 </div>
 
                 <aside className="space-y-3">
@@ -81,7 +96,11 @@ export default function LessonShow({
     );
 }
 
-function LessonContent({ lesson, embedUrl, watermark }: Omit<Props, 'course'>) {
+function LessonContent({
+    lesson,
+    embedUrl,
+    watermark,
+}: Pick<Props, 'lesson' | 'embedUrl' | 'watermark'>) {
     if (lesson.type === 'text') {
         if (!hasVisibleContent(lesson.content)) {
             return null;

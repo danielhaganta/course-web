@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Carbon\CarbonImmutable;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\ServiceProvider;
@@ -24,6 +25,20 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->configureDefaults();
+        $this->configureLargeUploads();
+    }
+
+    /**
+     * Upload file latihan lewat Livewire. Default Livewire: maks 12 MB dan 5 menit.
+     */
+    protected function configureLargeUploads(): void
+    {
+        $maxSizeKilobytes = Config::integer('filesystems.attachments.max_size_mb') * 1024;
+
+        Config::set([
+            'livewire.temporary_file_upload.rules' => ['required', 'file', "max:{$maxSizeKilobytes}"],
+            'livewire.temporary_file_upload.max_upload_time' => 60,
+        ]);
     }
 
     /**
