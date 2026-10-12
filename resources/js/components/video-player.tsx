@@ -36,7 +36,7 @@ export default function VideoPlayer({ embedUrl, title, watermark }: Props) {
 
     return (
         <div
-            className="relative aspect-video overflow-hidden rounded-lg bg-black"
+            className="relative aspect-video overflow-hidden rounded-[4px] bg-black"
             onContextMenu={(event) => event.preventDefault()}
         >
             <iframe

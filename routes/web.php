@@ -5,6 +5,7 @@ use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LessonController;
+use App\Http\Controllers\LessonProgressController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PricingController;
@@ -26,6 +27,10 @@ Route::get('courses/{course:slug}', [CourseController::class, 'show'])->name('co
 Route::get('courses/{course:slug}/lessons/{lesson}', [LessonController::class, 'show'])
     ->scopeBindings()
     ->name('lessons.show');
+Route::post('courses/{course:slug}/lessons/{lesson}/progress', [LessonProgressController::class, 'update'])
+    ->middleware('auth')
+    ->scopeBindings()
+    ->name('lessons.progress');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');

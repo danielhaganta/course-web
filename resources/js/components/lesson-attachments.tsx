@@ -1,5 +1,6 @@
 import { Link } from '@inertiajs/react';
-import { Download, FileArchive } from 'lucide-react';
+import { Download } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { pricing } from '@/routes';
 import { download } from '@/routes/attachments';
@@ -16,45 +17,53 @@ export default function LessonAttachments({ attachments, canDownload }: Props) {
     }
 
     return (
-        <section className="space-y-3">
-            <h2 className="font-semibold">File latihan</h2>
-            <ul className="divide-y rounded-lg border">
+        <section
+            aria-labelledby="attachments-title"
+            className="rounded-md border bg-secondary p-6"
+        >
+            <div className="flex flex-wrap items-center justify-between gap-3">
+                <h2 id="attachments-title" className="text-lg font-semibold">
+                    File latihan
+                </h2>
+                {!canDownload && (
+                    <Badge variant="outline">Khusus Premium</Badge>
+                )}
+            </div>
+            <ul className="mt-4 space-y-2.5">
                 {attachments.map((attachment) => (
                     <li
                         key={attachment.id}
-                        className="flex flex-wrap items-center gap-3 p-4 text-sm"
+                        className="flex flex-wrap items-center justify-between gap-3 rounded-[4px] bg-background px-4 py-3.5 text-[15px]"
                     >
-                        <FileArchive
-                            className="size-4 shrink-0 text-muted-foreground"
-                            aria-hidden
-                        />
-                        <span className="min-w-0 flex-1 break-words">
+                        <span className="min-w-0 break-words">
                             {attachment.name}
                         </span>
-                        <span className="text-muted-foreground tabular-nums">
-                            {formatFileSize(attachment.size_bytes)}
-                        </span>
-                        {canDownload ? (
-                            <Button asChild size="sm" variant="outline">
-                                {/* <a> biasa: respons berupa file, bukan halaman Inertia */}
-                                <a href={download.url(attachment.id)}>
+                        <span className="flex items-center gap-3">
+                            <span className="text-sm text-muted-foreground tabular-nums">
+                                {formatFileSize(attachment.size_bytes)}
+                            </span>
+                            {canDownload ? (
+                                <Button asChild size="sm" variant="outline">
+                                    {/* <a> biasa: respons berupa file, bukan halaman Inertia */}
+                                    <a href={download.url(attachment.id)}>
+                                        <Download /> Download
+                                    </a>
+                                </Button>
+                            ) : (
+                                <Button size="sm" variant="outline" disabled>
                                     <Download /> Download
-                                </a>
-                            </Button>
-                        ) : (
-                            <Button size="sm" variant="outline" disabled>
-                                <Download /> Download
-                            </Button>
-                        )}
+                                </Button>
+                            )}
+                        </span>
                     </li>
                 ))}
             </ul>
             {!canDownload && (
-                <p className="text-sm text-muted-foreground">
+                <p className="mt-4 text-sm text-muted-foreground">
                     Khusus member Premium.{' '}
                     <Link
                         href={pricing()}
-                        className="text-foreground underline"
+                        className="text-foreground underline underline-offset-4"
                     >
                         Lihat paket
                     </Link>

@@ -22,6 +22,9 @@ export type CourseSummary = {
     summary: string | null;
     thumbnail_url: string | null;
     lessons_count: number;
+    duration_seconds: number;
+    // Null kalau belum login atau tidak punya akses ke course ini
+    completed_lessons_count: number | null;
 };
 
 export type CourseDetail = {
@@ -34,6 +37,9 @@ export type CourseDetail = {
     price: number | null;
     can_access: boolean;
     sections: CourseSection[];
+    completed_lesson_ids: number[];
+    // Materi pertama yang belum selesai, null kalau tidak punya akses
+    resume_lesson_id: number | null;
 };
 
 export type CourseCurriculum = {

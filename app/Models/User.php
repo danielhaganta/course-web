@@ -16,6 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 
 /**
  * @property int $id
@@ -89,6 +90,27 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference,
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
+    }
+
+    /**
+     * @return HasMany<LessonProgress, $this>
+     */
+    public function lessonProgress(): HasMany
+    {
+        return $this->hasMany(LessonProgress::class);
+    }
+
+    /**
+     * Id materi course ini yang sudah ditandai selesai.
+     *
+     * @return Collection<int, int>
+     */
+    public function completedLessonIds(Course $course): Collection
+    {
+        return $this->lessonProgress()
+            ->completed()
+            ->whereIn('lesson_id', $course->lessons()->select('lessons.id'))
+            ->pluck('lesson_id');
     }
 
     /**

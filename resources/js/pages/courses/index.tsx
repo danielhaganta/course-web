@@ -1,12 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
-import { ImageIcon } from 'lucide-react';
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from '@/components/ui/card';
+import FootagePlaceholder from '@/components/footage-placeholder';
+import ProgressBar from '@/components/progress-bar';
+import { formatDuration } from '@/lib/duration';
 import { show } from '@/routes/courses';
 import type { CourseSummary } from '@/types';
 
@@ -17,71 +12,85 @@ type Props = {
 export default function CoursesIndex({ courses }: Props) {
     return (
         <>
-            <Head title="Courses">
+            <Head title="Course">
                 <meta
                     head-key="description"
                     name="description"
                     content="Daftar course color grading di Poeima Academy. Pilih course untuk melihat kurikulum dan materi preview gratis."
                 />
             </Head>
-            <div className="space-y-8">
-                <div className="space-y-2">
-                    <h1 className="text-3xl font-semibold tracking-tight">
-                        Courses
+
+            <div className="space-y-10">
+                <div className="flex flex-wrap items-end justify-between gap-4">
+                    <h1 className="font-display text-[clamp(56px,7vw,120px)] leading-[0.85] font-black uppercase">
+                        Course
                     </h1>
-                    <p className="text-muted-foreground">
-                        Pilih course dan mulai belajar.
+                    <p className="max-w-sm leading-relaxed text-muted-foreground">
+                        Pilih course untuk melihat kurikulumnya. Materi bertanda
+                        Preview bisa ditonton tanpa langganan.
                     </p>
                 </div>
 
                 {courses.length === 0 ? (
-                    <p className="rounded-lg border border-dashed p-8 text-center text-muted-foreground">
+                    <p className="rounded-md border border-dashed p-8 text-center text-muted-foreground">
                         Belum ada course yang tersedia.
                     </p>
                 ) : (
-                    <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                         {courses.map((course) => (
-                            <CourseCard key={course.slug} course={course} />
+                            <li key={course.slug}>
+                                <CoursePoster course={course} />
+                            </li>
                         ))}
-                    </div>
+                    </ul>
                 )}
             </div>
         </>
     );
 }
 
-function CourseCard({ course }: { course: CourseSummary }) {
+function CoursePoster({ course }: { course: CourseSummary }) {
     return (
         <Link
-            href={show(course)}
-            className="group rounded-xl focus-visible:ring-2 focus-visible:ring-ring focus-visible:outline-none"
+            href={show(course.slug)}
+            className="group relative block aspect-[3/4] overflow-hidden rounded-[2px] outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
         >
-            <Card className="h-full gap-4 overflow-hidden pt-0 transition-shadow group-hover:shadow-md">
+            <div className="absolute inset-0 transition-transform duration-500 ease-out group-hover:scale-[1.04] group-focus-visible:scale-[1.04]">
                 {course.thumbnail_url ? (
                     <img
                         src={course.thumbnail_url}
-                        alt={course.title}
-                        className="aspect-video w-full object-cover"
+                        alt=""
+                        loading="lazy"
+                        className="size-full object-cover"
                     />
                 ) : (
-                    <div className="flex aspect-video w-full items-center justify-center bg-muted text-muted-foreground">
-                        <ImageIcon className="size-8" aria-hidden />
+                    <FootagePlaceholder look="graded" tone="saturate(.6)" />
+                )}
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/40 to-transparent" />
+
+            <div className="absolute inset-x-5 bottom-5">
+                <h2 className="font-display text-[38px] leading-[0.95] font-extrabold uppercase">
+                    {course.title}
+                </h2>
+                <p className="mt-3 text-[13px] text-foreground-soft">
+                    {course.lessons_count} materi ·{' '}
+                    {formatDuration(course.duration_seconds)}
+                </p>
+                {course.completed_lessons_count !== null && (
+                    <div className="mt-4 space-y-2">
+                        <p className="text-xs font-semibold tracking-[0.12em] uppercase">
+                            {course.completed_lessons_count}/
+                            {course.lessons_count} materi selesai
+                        </p>
+                        <ProgressBar
+                            value={course.completed_lessons_count}
+                            max={course.lessons_count}
+                            label={`Progres ${course.title}`}
+                        />
                     </div>
                 )}
-                <CardHeader>
-                    <CardTitle className="leading-snug">
-                        {course.title}
-                    </CardTitle>
-                    {course.summary && (
-                        <CardDescription className="line-clamp-3">
-                            {course.summary}
-                        </CardDescription>
-                    )}
-                </CardHeader>
-                <CardContent className="mt-auto text-sm text-muted-foreground">
-                    {course.lessons_count} materi
-                </CardContent>
-            </Card>
+            </div>
         </Link>
     );
 }

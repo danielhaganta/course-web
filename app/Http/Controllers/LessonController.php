@@ -50,6 +50,7 @@ class LessonController extends Controller
                 'id', 'name', 'size_bytes',
             ])),
             'canDownload' => $access->canDownload($request->user(), $lesson),
+            'completedLessonIds' => $request->user()?->completedLessonIds($course) ?? [],
         ]);
     }
 }

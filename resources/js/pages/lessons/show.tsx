@@ -1,10 +1,11 @@
-import { Head, Link } from '@inertiajs/react';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
-import CourseSectionItem from '@/components/course-section-item';
+import { Form, Head, Link, usePage } from '@inertiajs/react';
+import { Check, ChevronLeft, ChevronRight } from 'lucide-react';
+import LessonProgressController from '@/actions/App/Http/Controllers/LessonProgressController';
 import LessonAttachments from '@/components/lesson-attachments';
+import LessonSidebar from '@/components/lesson-sidebar';
 import { Button } from '@/components/ui/button';
 import VideoPlayer from '@/components/video-player';
-import { show as showCourse } from '@/routes/courses';
+import { cn } from '@/lib/utils';
 import { show as showLesson } from '@/routes/lessons';
 import type {
     ActiveLesson,
@@ -20,6 +21,7 @@ type Props = {
     watermark: string | null;
     attachments: LessonAttachment[];
     canDownload: boolean;
+    completedLessonIds: number[];
 };
 
 export default function LessonShow({
@@ -29,70 +31,131 @@ export default function LessonShow({
     watermark,
     attachments,
     canDownload,
+    completedLessonIds,
 }: Props) {
+    const { auth } = usePage().props;
     const lessons = course.sections.flatMap((section) => section.lessons);
     const activeIndex = lessons.findIndex((item) => item.id === lesson.id);
-    const previousLesson = lessons[activeIndex - 1];
-    const nextLesson = lessons[activeIndex + 1];
+    const sectionIndex = course.sections.findIndex((section) =>
+        section.lessons.some((item) => item.id === lesson.id),
+    );
+    const lessonNumber =
+        course.sections[sectionIndex]?.lessons.findIndex(
+            (item) => item.id === lesson.id,
+        ) ?? -1;
 
     return (
         <>
-            <Head title={lesson.title} />
-            <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
-                <div className="min-w-0 space-y-6">
+            <Head title={`${lesson.title} · ${course.title}`} />
+
+            {/* HP: player, daftar materi, lalu file latihan. Desktop: daftar materi di kolom kanan */}
+            <div className="grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px] lg:grid-rows-[auto_1fr]">
+                <div className="min-w-0 lg:col-start-1">
                     <LessonContent
                         lesson={lesson}
                         embedUrl={embedUrl}
                         watermark={watermark}
                     />
 
-                    <div className="space-y-1">
-                        <Link
-                            href={showCourse(course.slug)}
-                            className="text-sm text-muted-foreground hover:text-foreground"
-                        >
-                            {course.title}
-                        </Link>
-                        <h1 className="text-2xl font-semibold tracking-tight">
-                            {lesson.title}
-                        </h1>
+                    <div className="mt-7 flex flex-wrap items-start justify-between gap-5">
+                        <div className="min-w-0">
+                            <p className="text-sm text-muted-foreground">
+                                Bagian {sectionIndex + 1} · Materi{' '}
+                                {lessonNumber + 1}
+                            </p>
+                            <h1 className="mt-2 font-display text-[clamp(36px,4vw,52px)] leading-none font-extrabold uppercase">
+                                {lesson.title}
+                            </h1>
+                        </div>
+                        {auth.user && (
+                            <CompletionToggle
+                                courseSlug={course.slug}
+                                lessonId={lesson.id}
+                                isCompleted={completedLessonIds.includes(
+                                    lesson.id,
+                                )}
+                            />
+                        )}
                     </div>
 
-                    <nav className="flex justify-between gap-4">
+                    <nav
+                        aria-label="Navigasi materi"
+                        className="mt-6 flex flex-wrap gap-3"
+                    >
                         <LessonNavButton
                             courseSlug={course.slug}
-                            lesson={previousLesson}
+                            lesson={lessons[activeIndex - 1]}
                             direction="previous"
                         />
                         <LessonNavButton
                             courseSlug={course.slug}
-                            lesson={nextLesson}
+                            lesson={lessons[activeIndex + 1]}
                             direction="next"
                         />
                     </nav>
+                </div>
 
-                    <LessonAttachments
-                        attachments={attachments}
-                        canDownload={canDownload}
+                <div className="lg:col-start-2 lg:row-span-2 lg:row-start-1">
+                    <LessonSidebar
+                        course={course}
+                        activeLessonId={lesson.id}
+                        completedLessonIds={completedLessonIds}
                     />
                 </div>
 
-                <aside className="space-y-3">
-                    <h2 className="font-semibold">Materi course</h2>
-                    {course.sections.map((section) => (
-                        <CourseSectionItem
-                            key={section.id}
-                            section={section}
-                            courseSlug={course.slug}
-                            activeLessonId={lesson.id}
-                            defaultOpen={section.lessons.some(
-                                (item) => item.id === lesson.id,
-                            )}
+                {attachments.length > 0 && (
+                    <div className="min-w-0 lg:col-start-1">
+                        <LessonAttachments
+                            attachments={attachments}
+                            canDownload={canDownload}
                         />
-                    ))}
-                </aside>
+                    </div>
+                )}
             </div>
         </>
+    );
+}
+
+function CompletionToggle({
+    courseSlug,
+    lessonId,
+    isCompleted,
+}: {
+    courseSlug: string;
+    lessonId: number;
+    isCompleted: boolean;
+}) {
+    return (
+        <Form
+            {...LessonProgressController.update.form({
+                course: courseSlug,
+                lesson: lessonId,
+            })}
+            options={{ preserveScroll: true }}
+        >
+            {({ processing }) => (
+                <>
+                    <input
+                        type="hidden"
+                        name="completed"
+                        value={isCompleted ? '0' : '1'}
+                    />
+                    <Button
+                        type="submit"
+                        size="lg"
+                        variant={isCompleted ? 'default' : 'outline'}
+                        aria-pressed={isCompleted}
+                        disabled={processing}
+                    >
+                        <Check
+                            className={cn(!isCompleted && 'opacity-40')}
+                            aria-hidden
+                        />
+                        {isCompleted ? 'Selesai ditonton' : 'Tandai selesai'}
+                    </Button>
+                </>
+            )}
+        </Form>
     );
 }
 
@@ -108,7 +171,7 @@ function LessonContent({
 
         return (
             <div
-                className="space-y-3 rounded-lg border p-6 leading-relaxed [&_a]:underline [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
+                className="space-y-4 rounded-md border bg-card p-6 leading-[1.7] text-foreground-soft sm:p-8 [&_a]:underline [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:font-semibold [&_h3]:text-foreground [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
                 // Sudah disanitasi di backend
                 dangerouslySetInnerHTML={{ __html: lesson.content ?? '' }}
             />
@@ -117,7 +180,7 @@ function LessonContent({
 
     if (!embedUrl) {
         return (
-            <div className="flex aspect-video items-center justify-center rounded-lg bg-muted text-muted-foreground">
+            <div className="flex aspect-video items-center justify-center rounded-[4px] bg-card text-muted-foreground">
                 Video belum tersedia.
             </div>
         );
@@ -145,40 +208,37 @@ function hasVisibleContent(html: string | null): boolean {
     return html.replace(/<[^>]*>|&nbsp;/g, '').trim() !== '';
 }
 
-type LessonNavButtonProps = {
-    courseSlug: string;
-    lesson: Lesson | undefined;
-    direction: 'previous' | 'next';
-};
-
 function LessonNavButton({
     courseSlug,
     lesson,
     direction,
-}: LessonNavButtonProps) {
-    const label =
-        direction === 'previous' ? 'Materi sebelumnya' : 'Materi berikutnya';
-    const content =
-        direction === 'previous' ? (
-            <>
-                <ChevronLeft /> {label}
-            </>
-        ) : (
-            <>
-                {label} <ChevronRight />
-            </>
-        );
+}: {
+    courseSlug: string;
+    lesson: Lesson | undefined;
+    direction: 'previous' | 'next';
+}) {
+    const isNext = direction === 'next';
+    const content = isNext ? (
+        <>
+            Materi berikutnya <ChevronRight />
+        </>
+    ) : (
+        <>
+            <ChevronLeft /> Materi sebelumnya
+        </>
+    );
+    const variant = isNext ? 'default' : 'outline';
 
     if (!lesson) {
         return (
-            <Button variant="outline" disabled>
+            <Button variant={variant} disabled>
                 {content}
             </Button>
         );
     }
 
     return (
-        <Button variant="outline" asChild>
+        <Button variant={variant} asChild>
             <Link href={showLesson({ course: courseSlug, lesson: lesson.id })}>
                 {content}
             </Link>
