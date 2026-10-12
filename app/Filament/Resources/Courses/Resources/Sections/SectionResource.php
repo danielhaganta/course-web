@@ -21,9 +21,9 @@ class SectionResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'title';
 
-    protected static ?string $modelLabel = 'bagian';
+    protected static ?string $modelLabel = 'section';
 
-    protected static ?string $pluralModelLabel = 'bagian';
+    protected static ?string $pluralModelLabel = 'sections';
 
     public static function form(Schema $schema): Schema
     {

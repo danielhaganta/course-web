@@ -20,7 +20,7 @@ class CourseForm
         return $schema
             ->components([
                 TextInput::make('title')
-                    ->label('Judul')
+                    ->label('Title')
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
@@ -38,11 +38,11 @@ class CourseForm
                     ->alphaDash()
                     ->unique(),
                 Textarea::make('summary')
-                    ->label('Ringkasan')
+                    ->label('Summary')
                     ->rows(3)
                     ->columnSpanFull(),
                 RichEditor::make('description')
-                    ->label('Deskripsi')
+                    ->label('Description')
                     ->columnSpanFull(),
                 FileUpload::make('thumbnail_path')
                     ->label('Thumbnail')
@@ -50,8 +50,8 @@ class CourseForm
                     ->disk('public')
                     ->directory('courses'),
                 TextInput::make('price')
-                    ->label('Harga satuan')
-                    ->helperText('Kosongkan jika tidak dijual satuan')
+                    ->label('Single purchase price')
+                    ->helperText('Leave empty if the course is not sold individually')
                     ->prefix('Rp')
                     ->mask(RawJs::make("\$money(\$input, ',', '.', 0)"))
                     ->stripCharacters('.')

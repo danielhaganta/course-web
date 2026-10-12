@@ -8,6 +8,7 @@ import {
 } from '@/components/ui/collapsible';
 import { formatDuration, totalDuration } from '@/lib/duration';
 import { show as showLesson } from '@/routes/lessons';
+import { pluralize } from '@/lib/utils';
 import type { CourseSection, Lesson } from '@/types';
 
 type Props = {
@@ -34,7 +35,7 @@ export default function CourseSectionItem({
                         {section.title}
                     </span>
                     <span className="mt-1.5 block text-[13px] text-muted-foreground">
-                        {section.lessons.length} materi ·{' '}
+                        {pluralize(section.lessons.length, 'lesson')} ·{' '}
                         {formatDuration(totalDuration(section.lessons))}
                     </span>
                 </span>
@@ -82,7 +83,7 @@ function LessonRow({
             >
                 <Icon
                     className="size-[18px] shrink-0 text-muted-foreground"
-                    aria-label={lesson.type === 'video' ? 'Video' : 'Teks'}
+                    aria-label={lesson.type === 'video' ? 'Video' : 'Text'}
                 />
                 <span className="min-w-0 flex-1">{lesson.title}</span>
                 {lesson.is_preview && <Badge>Preview</Badge>}
@@ -92,11 +93,11 @@ function LessonRow({
                 {!lesson.can_watch && (
                     <Lock
                         className="size-4 shrink-0 text-muted-foreground"
-                        aria-label="Terkunci"
+                        aria-label="Locked"
                     />
                 )}
                 {isCompleted && (
-                    <Check className="size-4 shrink-0" aria-label="Selesai" />
+                    <Check className="size-4 shrink-0" aria-label="Completed" />
                 )}
                 <span className="w-12 shrink-0 text-right text-[13px] text-muted-foreground tabular-nums">
                     {formatDuration(lesson.duration_seconds)}

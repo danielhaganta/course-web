@@ -3,9 +3,9 @@ import { cn } from '@/lib/utils';
 import { contact, privacy, terms } from '@/routes';
 
 const LINKS = [
-    { label: 'Syarat & ketentuan', href: terms() },
-    { label: 'Kebijakan privasi', href: privacy() },
-    { label: 'Kontak', href: contact() },
+    { label: 'Terms & conditions', href: terms() },
+    { label: 'Privacy policy', href: privacy() },
+    { label: 'Contact', href: contact() },
 ];
 
 export default function SiteFooter({ className }: { className?: string }) {
@@ -17,7 +17,7 @@ export default function SiteFooter({ className }: { className?: string }) {
             )}
         >
             <p>© {new Date().getFullYear()} Poeima Academy</p>
-            <nav aria-label="Informasi">
+            <nav aria-label="Information">
                 <ul className="flex flex-wrap gap-x-6 gap-y-2">
                     {LINKS.map((link) => (
                         <li key={link.label}>

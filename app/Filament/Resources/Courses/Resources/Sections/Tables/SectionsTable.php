@@ -18,14 +18,14 @@ class SectionsTable
             ->defaultSort('sort_order')
             ->columns([
                 TextColumn::make('title')
-                    ->label('Judul'),
+                    ->label('Title'),
                 TextColumn::make('lessons_count')
-                    ->label('Materi')
+                    ->label('Lessons')
                     ->counts('lessons'),
             ])
             ->recordActions([
                 EditAction::make()
-                    ->label('Kelola materi'),
+                    ->label('Manage lessons'),
                 DeleteAction::make(),
             ])
             ->toolbarActions([

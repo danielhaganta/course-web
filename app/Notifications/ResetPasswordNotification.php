@@ -20,10 +20,10 @@ class ResetPasswordNotification extends ResetPassword implements ShouldQueue
         $broker = Config::string('auth.defaults.passwords');
 
         return (new MailMessage)
-            ->subject('Reset password akun Poeima Academy')
-            ->line('Kami menerima permintaan untuk mengganti password akun Poeima Academy kamu.')
+            ->subject('Reset your Poeima Academy password')
+            ->line('We received a request to reset the password for your Poeima Academy account.')
             ->action('Reset password', $url)
-            ->line('Link ini berlaku '.Config::integer("auth.passwords.{$broker}.expire").' menit.')
-            ->line('Kalau kamu tidak meminta reset password, abaikan email ini. Password kamu tidak akan berubah.');
+            ->line('This link expires in '.Config::integer("auth.passwords.{$broker}.expire").' minutes.')
+            ->line('If you didn\'t request a password reset, you can ignore this email. Your password won\'t change.');
     }
 }

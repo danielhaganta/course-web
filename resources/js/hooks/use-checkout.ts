@@ -2,7 +2,8 @@ import { router, useHttp } from '@inertiajs/react';
 import { useState } from 'react';
 import type { CheckoutResponse } from '@/types';
 
-type SnapCallbacks = {
+type SnapOptions = {
+    language: 'en' | 'id';
     onSuccess: () => void;
     onPending: () => void;
     onError: () => void;
@@ -10,7 +11,7 @@ type SnapCallbacks = {
 };
 
 type Snap = {
-    pay: (token: string, callbacks: SnapCallbacks) => void;
+    pay: (token: string, options: SnapOptions) => void;
 };
 
 declare global {
@@ -20,7 +21,7 @@ declare global {
 }
 
 const DEFAULT_ERROR =
-    'Pembayaran belum bisa disiapkan. Coba lagi beberapa saat.';
+    "We couldn't prepare the payment. Please try again in a moment.";
 
 /**
  * Minta snap token ke server, lalu buka popup Midtrans Snap.
@@ -64,7 +65,9 @@ export function useCheckout() {
         try {
             await openSnap(payment);
         } catch {
-            setError('Popup pembayaran gagal dibuka. Coba lagi beberapa saat.');
+            setError(
+                "We couldn't open the payment window. Please try again in a moment.",
+            );
         } finally {
             setPreparing(false);
         }
@@ -78,6 +81,7 @@ async function openSnap(payment: CheckoutResponse): Promise<void> {
     const goToFinish = () => router.visit(payment.finish_url);
 
     snap.pay(payment.snap_token, {
+        language: 'en',
         onSuccess: goToFinish,
         onPending: goToFinish,
         onError: goToFinish,
@@ -97,10 +101,10 @@ function loadSnap(src: string, clientKey: string): Promise<Snap> {
         script.onload = () =>
             window.snap
                 ? resolve(window.snap)
-                : reject(new Error('Snap tidak tersedia'));
+                : reject(new Error('Snap is not available'));
         script.onerror = () => {
             script.remove();
-            reject(new Error('Gagal memuat Snap'));
+            reject(new Error('Failed to load Snap'));
         };
         document.head.appendChild(script);
     });

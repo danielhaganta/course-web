@@ -12,7 +12,7 @@ class SectionForm
         return $schema
             ->components([
                 TextInput::make('title')
-                    ->label('Judul')
+                    ->label('Title')
                     ->required()
                     ->maxLength(255),
             ]);

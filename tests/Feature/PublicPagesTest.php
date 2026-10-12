@@ -9,12 +9,12 @@ test('public pages render their component', function (string $routeName, string 
         ->assertOk()
         ->assertInertia(fn (Assert $page) => $page->component($component));
 })->with([
-    'beranda' => ['home', 'home'],
+    'home' => ['home', 'home'],
     'before / after' => ['before-after', 'before-after'],
-    'pengajar' => ['instructor', 'instructor'],
-    'syarat & ketentuan' => ['terms', 'info'],
-    'kebijakan privasi' => ['privacy', 'info'],
-    'kontak' => ['contact', 'info'],
+    'instructor' => ['instructor', 'instructor'],
+    'terms & conditions' => ['terms', 'info'],
+    'privacy policy' => ['privacy', 'info'],
+    'contact' => ['contact', 'info'],
 ]);
 
 test('website is always rendered in dark mode', function () {
@@ -33,16 +33,25 @@ test('footer pages show a clear placeholder', function (string $routeName, strin
             ->component('info')
             ->where('placeholder', fn (string $text) => str_contains($text, $placeholder)));
 })->with([
-    'syarat & ketentuan' => ['terms', '[Isi syarat & ketentuan dari pemilik website'],
-    'kebijakan privasi' => ['privacy', '[Isi kebijakan privasi dari pemilik website'],
-    'kontak' => ['contact', '[Isi kontak dari pemilik website'],
+    'terms & conditions' => ['terms', '[Terms & conditions from the website owner'],
+    'privacy policy' => ['privacy', '[Privacy policy from the website owner'],
+    'contact' => ['contact', '[Contact details from the website owner'],
 ]);
 
-test('error pages use Indonesian messages and link back home', function () {
-    $this->get('/halaman-yang-tidak-ada')
+test('public pages use English URLs', function (string $routeName, string $path) {
+    expect(route($routeName, absolute: false))->toBe($path);
+})->with([
+    ['instructor', '/instructor'],
+    ['terms', '/terms'],
+    ['privacy', '/privacy'],
+    ['contact', '/contact'],
+]);
+
+test('error pages use English messages and link back home', function () {
+    $this->get('/page-that-does-not-exist')
         ->assertNotFound()
-        ->assertSee('Halaman tidak ditemukan')
-        ->assertSee('Kembali ke beranda');
+        ->assertSee('Page not found')
+        ->assertSee('Back to home');
 });
 
 test('forbidden page uses the new style', function () {
@@ -51,13 +60,12 @@ test('forbidden page uses the new style', function () {
     $this->actingAs(User::factory()->create())
         ->get(route('checkout.finish', $order))
         ->assertForbidden()
-        ->assertSee('Akses ditolak');
+        ->assertSee('Access denied');
 });
 
-test('login errors are shown in Indonesian', function () {
-    app()->setLocale('id');
+test('login errors are shown in English', function () {
     $user = User::factory()->create();
 
-    $this->post(route('login.store'), ['email' => $user->email, 'password' => 'salah'])
-        ->assertSessionHasErrors(['email' => 'Email atau password salah.']);
+    $this->post(route('login.store'), ['email' => $user->email, 'password' => 'wrong-password'])
+        ->assertSessionHasErrors(['email' => 'These credentials do not match our records.']);
 });

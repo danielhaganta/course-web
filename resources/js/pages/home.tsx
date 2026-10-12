@@ -24,11 +24,11 @@ const STILLS: Still[] = [
 export default function Home() {
     return (
         <>
-            <Head title="Kelas color grading DaVinci Resolve">
+            <Head title="DaVinci Resolve color grading course">
                 <meta
                     head-key="description"
                     name="description"
-                    content="Belajar color grading di DaVinci Resolve lewat video course bertahap, dari koreksi warna dasar sampai look sinematik."
+                    content="Learn color grading in DaVinci Resolve through step-by-step video courses, from basic color correction to cinematic looks."
                 />
             </Head>
 
@@ -52,18 +52,16 @@ export default function Home() {
                         id="home-title"
                         className="mt-5 font-display text-[clamp(64px,9vw,150px)] leading-[0.84] font-black uppercase"
                     >
-                        Warna yang
+                        Color that
                         <br />
-                        bercerita.
+                        tells stories.
                     </h1>
                     <div className="mt-9 flex flex-wrap items-center gap-4">
                         <Button asChild size="lg">
-                            <Link href={pricing()}>Mulai belajar</Link>
+                            <Link href={pricing()}>Start learning</Link>
                         </Button>
                         <Button asChild size="lg" variant="outline">
-                            <Link href={beforeAfter()}>
-                                Lihat before / after
-                            </Link>
+                            <Link href={beforeAfter()}>See before / after</Link>
                         </Button>
                     </div>
                 </div>

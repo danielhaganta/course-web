@@ -9,7 +9,7 @@ import { store } from '@/routes/password/confirm';
 export default function ConfirmPassword() {
     return (
         <>
-            <Head title="Konfirmasi password" />
+            <Head title="Confirm password" />
 
             <Form {...store.form()} resetOnSuccess={['password']}>
                 {({ processing, errors }) => (
@@ -34,7 +34,7 @@ export default function ConfirmPassword() {
                                 data-test="confirm-password-button"
                             >
                                 {processing && <Spinner />}
-                                Konfirmasi
+                                Confirm
                             </Button>
                         </div>
                     </div>
@@ -45,7 +45,7 @@ export default function ConfirmPassword() {
 }
 
 ConfirmPassword.layout = {
-    title: 'Konfirmasi password',
+    title: 'Confirm password',
     description:
-        'Untuk keamanan, masukkan lagi password akunmu sebelum melanjutkan.',
+        'For your security, enter your password again before continuing.',
 };

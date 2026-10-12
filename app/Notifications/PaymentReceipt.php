@@ -43,24 +43,24 @@ class PaymentReceipt extends Notification implements ShouldQueue
         $item = $order->purchasable;
 
         $mail = (new MailMessage)
-            ->subject("Pembayaran berhasil: {$order->itemName()}")
-            ->greeting("Halo {$notifiable->name},")
-            ->line('Terima kasih, pembayaran kamu sudah kami terima. Berikut detailnya.')
-            ->line("**Kode order:** {$order->code}")
-            ->line('**Item:** '.($item instanceof Plan ? "Paket {$item->name}" : "Course {$item->title}"))
-            ->line('**Nominal:** '.Number::currency($order->amount, in: 'IDR', locale: 'id', precision: 0))
-            ->line('**Metode pembayaran:** '.(app(Midtrans::class)->paymentMethodLabel($order) ?? '-'))
-            ->line('**Tanggal bayar:** '.($order->paid_at ? $this->formatDate($order->paid_at) : '-'));
+            ->subject("Payment received: {$order->itemName()}")
+            ->greeting("Hi {$notifiable->name},")
+            ->line('Thanks, we have received your payment. Here are the details.')
+            ->line("**Order code:** {$order->code}")
+            ->line('**Item:** '.($item instanceof Plan ? "{$item->name} plan" : "{$item->title} course"))
+            ->line('**Amount:** '.Number::currency($order->amount, in: 'IDR', locale: 'id', precision: 0))
+            ->line('**Payment method:** '.(app(Midtrans::class)->paymentMethodLabel($order) ?? '-'))
+            ->line('**Paid on:** '.($order->paid_at ? $this->formatDate($order->paid_at) : '-'));
 
         $mail = $item instanceof Plan
-            ? $mail->line("Langganan **{$item->name}** kamu aktif sampai **".($this->subscription ? $this->formatDate($this->subscription->ends_at) : '-').'**.')
-            : $mail->line("Kamu sekarang punya akses selamanya ke course **{$item->title}**.");
+            ? $mail->line("Your **{$item->name}** subscription is active until **".($this->subscription ? $this->formatDate($this->subscription->ends_at) : '-').'**.')
+            : $mail->line("You now have lifetime access to **{$item->title}**.");
 
-        return $mail->action('Buka dashboard', route('dashboard'));
+        return $mail->action('Open dashboard', route('dashboard'));
     }
 
     private function formatDate(CarbonInterface $date): string
     {
-        return $date->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('j F Y, H.i').' WIB';
+        return $date->setTimezone('Asia/Jakarta')->format('j M Y, H:i').' WIB';
     }
 }

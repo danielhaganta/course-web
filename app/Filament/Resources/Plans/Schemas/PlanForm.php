@@ -18,7 +18,7 @@ class PlanForm
         return $schema
             ->components([
                 TextInput::make('name')
-                    ->label('Nama')
+                    ->label('Name')
                     ->required()
                     ->maxLength(255)
                     ->live(onBlur: true)
@@ -36,11 +36,11 @@ class PlanForm
                     ->alphaDash()
                     ->unique(),
                 Textarea::make('description')
-                    ->label('Deskripsi')
+                    ->label('Description')
                     ->rows(3)
                     ->columnSpanFull(),
                 TextInput::make('price')
-                    ->label('Harga')
+                    ->label('Price')
                     ->prefix('Rp')
                     ->mask(RawJs::make("\$money(\$input, ',', '.', 0)"))
                     ->stripCharacters('.')
@@ -48,18 +48,18 @@ class PlanForm
                     ->minValue(0)
                     ->required(),
                 TextInput::make('duration_days')
-                    ->label('Durasi')
-                    ->suffix('hari')
+                    ->label('Duration')
+                    ->suffix('days')
                     ->integer()
                     ->minValue(1)
                     ->required(),
                 Toggle::make('can_access_exclusive')
-                    ->label('Akses materi exclusive'),
+                    ->label('Exclusive lessons'),
                 Toggle::make('can_download')
-                    ->label('Download file latihan'),
+                    ->label('Practice file downloads'),
                 Toggle::make('is_active')
-                    ->label('Aktif')
-                    ->helperText('Nonaktif hanya menyembunyikan dari halaman pricing, langganan yang ada tetap berlaku.')
+                    ->label('Active')
+                    ->helperText('Turning this off only hides the plan from the pricing page. Existing subscriptions stay valid.')
                     ->default(true),
             ]);
     }

@@ -22,9 +22,9 @@ class PlanResource extends Resource
 
     protected static ?string $recordTitleAttribute = 'name';
 
-    protected static ?string $modelLabel = 'paket';
+    protected static ?string $modelLabel = 'plan';
 
-    protected static ?string $pluralModelLabel = 'paket';
+    protected static ?string $pluralModelLabel = 'plans';
 
     public static function form(Schema $schema): Schema
     {

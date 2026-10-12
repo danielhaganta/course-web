@@ -13,7 +13,7 @@ enum LessonType: string implements HasLabel
     {
         return match ($this) {
             self::Video => 'Video',
-            self::Text => 'Teks',
+            self::Text => 'Text',
         };
     }
 }

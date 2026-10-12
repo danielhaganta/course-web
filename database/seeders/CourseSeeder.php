@@ -19,16 +19,16 @@ class CourseSeeder extends Seeder
     {
         $courses = [
             [
-                'title' => 'Color Grading Sinematik dengan DaVinci Resolve',
-                'summary' => 'Belajar mewarnai video agar terlihat seperti film, dari koreksi warna dasar sampai membuat look sendiri.',
+                'title' => 'Cinematic Color Grading in DaVinci Resolve',
+                'summary' => 'Learn to grade video so it looks like film, from basic color correction to building your own look.',
                 'price' => 349_000,
-                'sections' => ['Dasar Koreksi Warna', 'Membuat Look Sinematik', 'Workflow dan Export'],
+                'sections' => ['Color Correction Basics', 'Building a Cinematic Look', 'Workflow and Export'],
             ],
             [
-                'title' => 'Video Editing untuk Kreator Konten',
-                'summary' => 'Edit video YouTube dan media sosial yang rapi, cepat, dan enak ditonton.',
+                'title' => 'Video Editing for Content Creators',
+                'summary' => 'Edit clean, fast, watchable videos for YouTube and social media.',
                 'price' => 299_000,
-                'sections' => ['Persiapan Project', 'Teknik Editing', 'Audio dan Finishing'],
+                'sections' => ['Project Setup', 'Editing Techniques', 'Audio and Finishing'],
             ],
         ];
 

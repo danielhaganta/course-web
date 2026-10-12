@@ -29,7 +29,6 @@ class DeviceController extends Controller
             ...$this->describeUserAgent($session->user_agent),
             'ip_address' => $session->ip_address,
             'last_active' => Carbon::createFromTimestamp($session->last_activity)
-                ->settings(['locale' => 'id'])
                 ->diffForHumans(),
             'is_current' => $session->id === $currentSessionId,
         ]);
@@ -54,7 +53,7 @@ class DeviceController extends Controller
 
         $this->devices->logoutSessions($request->user(), [$sessionId]);
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Perangkat sudah dikeluarkan.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'Device signed out.']);
 
         return back();
     }
@@ -70,7 +69,7 @@ class DeviceController extends Controller
 
         $this->devices->logoutSessions($request->user(), $otherSessionIds->values()->all());
 
-        Inertia::flash('toast', ['type' => 'success', 'message' => 'Semua perangkat lain sudah dikeluarkan.']);
+        Inertia::flash('toast', ['type' => 'success', 'message' => 'All other devices signed out.']);
 
         return back();
     }
@@ -96,7 +95,7 @@ class DeviceController extends Controller
             str_contains($agent, 'Firefox/') => 'Firefox',
             str_contains($agent, 'Chrome/') => 'Chrome',
             str_contains($agent, 'Safari/') => 'Safari',
-            default => 'Browser tidak dikenal',
+            default => 'Unknown browser',
         };
 
         $platform = match (true) {
@@ -105,7 +104,7 @@ class DeviceController extends Controller
             str_contains($agent, 'iPhone'), str_contains($agent, 'iPad') => 'iOS',
             str_contains($agent, 'Mac OS') => 'macOS',
             str_contains($agent, 'Linux') => 'Linux',
-            default => 'OS tidak dikenal',
+            default => 'Unknown OS',
         };
 
         return ['browser' => $browser, 'platform' => $platform];

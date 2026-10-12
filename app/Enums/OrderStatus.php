@@ -15,10 +15,10 @@ enum OrderStatus: string implements HasColor, HasLabel
     public function getLabel(): string
     {
         return match ($this) {
-            self::Pending => 'Menunggu pembayaran',
-            self::Paid => 'Berhasil',
-            self::Failed => 'Gagal',
-            self::Expired => 'Kedaluwarsa',
+            self::Pending => 'Awaiting payment',
+            self::Paid => 'Paid',
+            self::Failed => 'Failed',
+            self::Expired => 'Expired',
         };
     }
 

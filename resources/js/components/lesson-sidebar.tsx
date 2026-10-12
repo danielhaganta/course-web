@@ -1,7 +1,7 @@
 import { Link } from '@inertiajs/react';
 import { Check, Lock } from 'lucide-react';
 import { formatDuration } from '@/lib/duration';
-import { cn } from '@/lib/utils';
+import { cn, pluralize } from '@/lib/utils';
 import { show as showLesson } from '@/routes/lessons';
 import type { CourseCurriculum, Lesson } from '@/types';
 
@@ -18,7 +18,7 @@ export default function LessonSidebar({
 }: Props) {
     return (
         <aside
-            aria-label="Daftar materi"
+            aria-label="Lessons"
             className="overflow-hidden rounded-md border"
         >
             {course.sections.map((section) => (
@@ -26,7 +26,7 @@ export default function LessonSidebar({
                     <p className="border-b bg-secondary px-5 py-4 text-[15px] font-bold">
                         {section.title}
                         <span className="mt-1 block text-xs font-medium text-muted-foreground">
-                            {section.lessons.length} materi
+                            {pluralize(section.lessons.length, 'lesson')}
                         </span>
                     </p>
                     <ul>
@@ -85,7 +85,7 @@ function LessonItem({
                         <Check
                             className="size-3"
                             strokeWidth={3.5}
-                            aria-label="Selesai"
+                            aria-label="Completed"
                         />
                     )}
                 </span>
@@ -98,7 +98,7 @@ function LessonItem({
                 {!lesson.can_watch && (
                     <Lock
                         className="mt-0.5 size-3.5 shrink-0 text-muted-foreground"
-                        aria-label="Terkunci"
+                        aria-label="Locked"
                     />
                 )}
             </Link>

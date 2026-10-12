@@ -15,10 +15,10 @@ class PlanSeeder extends Seeder
     {
         // Harga contoh, diubah lewat admin
         $plans = [
-            ['name' => 'Standard Bulanan', 'price' => 149_000, 'duration_days' => 30, 'is_premium' => false],
-            ['name' => 'Standard Tahunan', 'price' => 1_490_000, 'duration_days' => 365, 'is_premium' => false],
-            ['name' => 'Premium Bulanan', 'price' => 249_000, 'duration_days' => 30, 'is_premium' => true],
-            ['name' => 'Premium Tahunan', 'price' => 1_500_000, 'duration_days' => 365, 'is_premium' => true],
+            ['name' => 'Standard Monthly', 'price' => 149_000, 'duration_days' => 30, 'is_premium' => false],
+            ['name' => 'Standard Yearly', 'price' => 1_490_000, 'duration_days' => 365, 'is_premium' => false],
+            ['name' => 'Premium Monthly', 'price' => 249_000, 'duration_days' => 30, 'is_premium' => true],
+            ['name' => 'Premium Yearly', 'price' => 1_500_000, 'duration_days' => 365, 'is_premium' => true],
         ];
 
         foreach ($plans as $index => $plan) {

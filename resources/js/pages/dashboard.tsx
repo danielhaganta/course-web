@@ -2,6 +2,8 @@ import { Head, Link, usePage } from '@inertiajs/react';
 import FootagePlaceholder from '@/components/footage-placeholder';
 import ProgressBar from '@/components/progress-bar';
 import { Button } from '@/components/ui/button';
+import { formatDate } from '@/lib/date';
+import { pluralize } from '@/lib/utils';
 import { dashboard, pricing } from '@/routes';
 import { index as coursesIndex, show as showCourse } from '@/routes/courses';
 import { show as showLesson } from '@/routes/lessons';
@@ -40,7 +42,7 @@ export default function Dashboard({
             <Head title="Dashboard" />
             <div className="flex flex-1 flex-col gap-10 p-4 sm:p-6 lg:p-8">
                 <h1 className="font-display text-[clamp(40px,5vw,64px)] leading-[0.92] font-extrabold uppercase">
-                    Halo, {firstName}
+                    Hi, {firstName}
                 </h1>
 
                 {isEmpty ? (
@@ -62,7 +64,7 @@ export default function Dashboard({
                 {courses.length > 0 && (
                     <section aria-labelledby="my-courses-title">
                         <SectionTitle id="my-courses-title">
-                            Course kamu
+                            Your courses
                         </SectionTitle>
                         <ul className="mt-5 grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
                             {courses.map((course) => (
@@ -77,7 +79,7 @@ export default function Dashboard({
                 {purchasedCourses.length > 0 && (
                     <section aria-labelledby="purchased-title">
                         <SectionTitle id="purchased-title">
-                            Course yang dibeli satuan
+                            Courses you bought
                         </SectionTitle>
                         <ul className="mt-5 divide-y rounded-md border">
                             {purchasedCourses.map((course) => (
@@ -90,7 +92,7 @@ export default function Dashboard({
                                             {course.title}
                                         </span>
                                         <span className="text-sm text-muted-foreground">
-                                            Akses selamanya
+                                            Lifetime access
                                         </span>
                                     </Link>
                                 </li>
@@ -142,7 +144,7 @@ function ContinueLearningCard({ course }: { course: ContinueLearning }) {
                         id="continue-title"
                         className="text-xs font-semibold tracking-[0.18em] uppercase"
                     >
-                        Lanjutkan belajar
+                        Continue learning
                     </p>
                     <h3 className="mt-3 font-display text-3xl leading-[0.95] font-extrabold uppercase">
                         {course.title}
@@ -157,7 +159,7 @@ function ContinueLearningCard({ course }: { course: ContinueLearning }) {
                                 lesson: course.next_lesson_id,
                             })}
                         >
-                            Lanjut ke materi berikutnya
+                            Go to next lesson
                         </Link>
                     </Button>
                 )}
@@ -171,11 +173,11 @@ function StartLearningCard() {
         <section className="flex flex-col justify-between gap-6 rounded-md border bg-card p-6 sm:p-7">
             <div>
                 <h2 className="font-display text-3xl font-extrabold uppercase">
-                    Mulai belajar
+                    Start learning
                 </h2>
                 <p className="mt-2 max-w-md text-foreground-soft">
-                    Pilih satu course di bawah. Materi yang kamu tandai selesai
-                    akan muncul di sini.
+                    Pick a course below. Lessons you mark as completed will show
+                    up here.
                 </p>
             </div>
         </section>
@@ -193,25 +195,25 @@ function SubscriptionCard({
         return (
             <section className="flex flex-col gap-5 rounded-md border bg-card p-6 sm:p-7">
                 <p className="text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">
-                    Langganan
+                    Subscription
                 </p>
                 <div>
                     <h2 className="text-xl font-bold">
                         {endedSubscription
-                            ? `${endedSubscription.plan_name} sudah berakhir`
-                            : 'Belum berlangganan'}
+                            ? `${endedSubscription.plan_name} has ended`
+                            : 'No subscription yet'}
                     </h2>
                     <p className="mt-1.5 text-sm text-foreground-soft">
                         {endedSubscription
-                            ? `Berakhir ${formatDate(endedSubscription.ends_at)}.`
-                            : 'Berlangganan untuk membuka semua course.'}
+                            ? `Ended ${formatDate(endedSubscription.ends_at)}.`
+                            : 'Subscribe to unlock every course.'}
                     </p>
                 </div>
                 <Button asChild className="self-start">
                     <Link href={pricing()}>
                         {endedSubscription
-                            ? 'Perpanjang langganan'
-                            : 'Pilih paket'}
+                            ? 'Renew subscription'
+                            : 'Choose a plan'}
                     </Link>
                 </Button>
             </section>
@@ -226,18 +228,19 @@ function SubscriptionCard({
     return (
         <section className="flex flex-col gap-5 rounded-md border bg-card p-6 sm:p-7">
             <p className="text-xs font-semibold tracking-[0.18em] text-muted-foreground uppercase">
-                Langganan aktif
+                Active subscription
             </p>
             <div>
                 <h2 className="text-xl font-bold">{subscription.plan_name}</h2>
                 <p className="mt-1.5 text-sm text-foreground-soft">
-                    Berlaku sampai {formatDate(subscription.ends_at)}
-                    {isEndingSoon && ` · sisa ${Math.max(daysLeft, 0)} hari`}
+                    Valid until {formatDate(subscription.ends_at)}
+                    {isEndingSoon &&
+                        ` · ${pluralize(Math.max(daysLeft, 0), 'day')} left`}
                 </p>
             </div>
             {isEndingSoon && (
                 <Button asChild className="self-start">
-                    <Link href={pricing()}>Perpanjang langganan</Link>
+                    <Link href={pricing()}>Renew subscription</Link>
                 </Button>
             )}
         </section>
@@ -248,13 +251,13 @@ function CourseProgressLine({ course }: { course: DashboardCourse }) {
     return (
         <div className="space-y-2">
             <p className="text-sm text-muted-foreground">
-                {course.completed_lessons_count} dari {course.lessons_count}{' '}
-                materi selesai
+                {course.completed_lessons_count} of {course.lessons_count}{' '}
+                lessons completed
             </p>
             <ProgressBar
                 value={course.completed_lessons_count}
                 max={course.lessons_count}
-                label={`Progres ${course.title}`}
+                label={`${course.title} progress`}
             />
         </div>
     );
@@ -288,35 +291,28 @@ function EmptyState({
         <section className="rounded-md border bg-card p-7 sm:p-10">
             <h2 className="font-display text-4xl font-extrabold uppercase">
                 {endedSubscription
-                    ? 'Langgananmu sudah berakhir'
-                    : 'Belum ada course'}
+                    ? 'Your subscription has ended'
+                    : 'No courses yet'}
             </h2>
             <p className="mt-3 max-w-lg text-foreground-soft">
                 {endedSubscription
-                    ? `${endedSubscription.plan_name} berakhir ${formatDate(endedSubscription.ends_at)}. Perpanjang untuk membuka lagi semua course dan progresmu.`
-                    : 'Pilih paket langganan untuk membuka semua course, atau beli satu course yang kamu butuhkan.'}
+                    ? `${endedSubscription.plan_name} ended on ${formatDate(endedSubscription.ends_at)}. Renew to unlock every course and your progress again.`
+                    : 'Choose a plan to unlock every course, or buy just the course you need.'}
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
                 <Button asChild size="lg">
                     <Link href={pricing()}>
                         {endedSubscription
-                            ? 'Perpanjang langganan'
-                            : 'Pilih paket'}
+                            ? 'Renew subscription'
+                            : 'Choose a plan'}
                     </Link>
                 </Button>
                 <Button asChild size="lg" variant="outline">
-                    <Link href={coursesIndex()}>Lihat course</Link>
+                    <Link href={coursesIndex()}>Browse courses</Link>
                 </Button>
             </div>
         </section>
     );
-}
-
-function formatDate(isoDate: string): string {
-    return new Date(isoDate).toLocaleDateString('id-ID', {
-        dateStyle: 'long',
-        timeZone: 'Asia/Jakarta',
-    });
 }
 
 Dashboard.layout = {

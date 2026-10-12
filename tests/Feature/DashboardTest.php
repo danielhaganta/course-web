@@ -32,7 +32,7 @@ test('dashboard shows the active subscription and purchased courses', function (
         ->get(route('dashboard'))
         ->assertInertia(fn (Assert $page) => $page
             ->component('dashboard')
-            ->where('subscription.plan_name', 'Premium Bulanan')
+            ->where('subscription.plan_name', 'Premium Monthly')
             ->where('subscription.ends_at', $subscription->ends_at->toIso8601String())
             ->has('purchasedCourses', 1)
             ->where('purchasedCourses.0.slug', $purchase->course->slug));
@@ -83,6 +83,6 @@ test('dashboard shows the last ended subscription for renewal', function () {
         ->get(route('dashboard'))
         ->assertInertia(fn (Assert $page) => $page
             ->where('subscription', null)
-            ->where('endedSubscription.plan_name', 'Premium Bulanan')
+            ->where('endedSubscription.plan_name', 'Premium Monthly')
             ->has('courses', 0));
 });

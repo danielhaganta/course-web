@@ -71,7 +71,7 @@ test('checkout of an owned course is rejected', function () {
     $this->actingAs($purchase->user)
         ->postJson(route('checkout.course', $purchase->course))
         ->assertUnprocessable()
-        ->assertJson(['message' => 'Kamu sudah memiliki course ini.']);
+        ->assertJson(['message' => 'You already own this course.']);
 
     expect(Order::count())->toBe(0);
     Http::assertNothingSent();
@@ -103,7 +103,7 @@ test('gateway error returns a clear message and leaves no order', function () {
     $this->actingAs(User::factory()->create())
         ->postJson(route('checkout.plan', Plan::factory()->create()))
         ->assertStatus(502)
-        ->assertJson(['message' => 'Pembayaran belum bisa disiapkan. Coba lagi beberapa saat.']);
+        ->assertJson(['message' => 'We couldn\'t prepare the payment. Please try again in a moment.']);
 
     expect(Order::count())->toBe(0);
 });

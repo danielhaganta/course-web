@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCheckout } from '@/hooks/use-checkout';
 import { formatRupiah } from '@/lib/currency';
-import { cn } from '@/lib/utils';
+import { cn, pluralize } from '@/lib/utils';
 import { register } from '@/routes';
 import { index as coursesIndex } from '@/routes/courses';
 import type { Plan } from '@/types';
@@ -52,12 +52,12 @@ function yearlySavingsPercent(plans: Plan[]): number | null {
 
 function periodLabel(plan: Plan): string {
     if (isYearly(plan)) {
-        return 'per tahun';
+        return 'per year';
     }
 
     return plan.duration_days === 30
-        ? 'per bulan'
-        : `per ${plan.duration_days} hari`;
+        ? 'per month'
+        : `per ${plan.duration_days} days`;
 }
 
 export default function Pricing({ plans, maxDevices }: Props) {
@@ -70,21 +70,21 @@ export default function Pricing({ plans, maxDevices }: Props) {
 
     return (
         <>
-            <Head title="Paket">
+            <Head title="Pricing">
                 <meta
                     head-key="description"
                     name="description"
-                    content="Pilih paket langganan Poeima Academy untuk membuka semua course color grading, atau beli satu course saja."
+                    content="Choose a Poeima Academy plan to unlock every color grading course, or buy a single course."
                 />
             </Head>
 
             <section className="mx-auto max-w-3xl text-center">
                 <h1 className="font-display text-[clamp(56px,8vw,96px)] leading-[0.92] font-extrabold uppercase">
-                    Pilih paketmu
+                    Choose your plan
                 </h1>
                 <p className="mx-auto mt-5 max-w-[560px] text-lg leading-relaxed text-foreground-soft">
-                    Langganan membuka semua course. Akses tetap aktif sampai
-                    masa langganan habis.
+                    A subscription unlocks every course. Access stays active
+                    until your subscription ends.
                 </p>
                 <BillingToggle
                     billing={billing}
@@ -95,11 +95,11 @@ export default function Pricing({ plans, maxDevices }: Props) {
 
             {visiblePlans.length === 0 ? (
                 <p className="mx-auto mt-12 max-w-[1000px] rounded-md border border-dashed p-8 text-center text-muted-foreground">
-                    Belum ada paket yang tersedia.
+                    No plans available yet.
                 </p>
             ) : (
                 <section
-                    aria-label="Paket langganan"
+                    aria-label="Subscription plans"
                     className="mx-auto mt-12 grid max-w-[1000px] gap-6 md:grid-cols-2"
                 >
                     {visiblePlans.map((plan) => (
@@ -115,16 +115,14 @@ export default function Pricing({ plans, maxDevices }: Props) {
 
             <section className="mx-auto mt-6 flex max-w-[1000px] flex-wrap items-center justify-between gap-5 rounded-md border border-dashed border-foreground/25 px-6 py-7 sm:px-8">
                 <div>
-                    <h2 className="text-xl font-bold">
-                        Hanya butuh satu course?
-                    </h2>
+                    <h2 className="text-xl font-bold">Only need one course?</h2>
                     <p className="mt-1.5 text-muted-foreground">
-                        Beli satuan, bayar sekali, akses selamanya. Harganya ada
-                        di halaman tiap course.
+                        Buy it on its own, pay once, and keep it forever. Prices
+                        are on each course page.
                     </p>
                 </div>
                 <Button asChild variant="outline">
-                    <Link href={coursesIndex()}>Lihat course</Link>
+                    <Link href={coursesIndex()}>Browse courses</Link>
                 </Button>
             </section>
 
@@ -143,20 +141,20 @@ function BillingToggle({
     savingsPercent: number | null;
 }) {
     const options: { value: Billing; label: string }[] = [
-        { value: 'monthly', label: 'Bulanan' },
+        { value: 'monthly', label: 'Monthly' },
         {
             value: 'yearly',
             label:
                 savingsPercent !== null
-                    ? `Tahunan · hemat ${savingsPercent}%`
-                    : 'Tahunan',
+                    ? `Yearly · save ${savingsPercent}%`
+                    : 'Yearly',
         },
     ];
 
     return (
         <div
             role="group"
-            aria-label="Periode pembayaran"
+            aria-label="Billing period"
             className="mt-9 inline-flex gap-1 rounded-md border bg-secondary p-1"
         >
             {options.map((option) => {
@@ -193,18 +191,18 @@ function PlanCard({
     isGuest: boolean;
 }) {
     const benefits = [
-        { label: 'Semua video course reguler', isIncluded: true },
-        { label: 'Progres belajar tersimpan', isIncluded: true },
+        { label: 'All regular course videos', isIncluded: true },
+        { label: 'Saved learning progress', isIncluded: true },
         {
             label: plan.can_access_exclusive
-                ? 'Materi exclusive'
-                : 'Tanpa materi exclusive',
+                ? 'Exclusive lessons'
+                : 'No exclusive lessons',
             isIncluded: plan.can_access_exclusive,
         },
         {
             label: plan.can_download
-                ? 'Download file latihan'
-                : 'Tanpa download file latihan',
+                ? 'Practice file downloads'
+                : 'No practice file downloads',
             isIncluded: plan.can_download,
         },
     ];
@@ -218,7 +216,7 @@ function PlanCard({
         >
             <div className="flex items-center justify-between gap-3">
                 <h2 className="text-2xl font-bold">{plan.name}</h2>
-                {isHighlighted && <Badge>Paling lengkap</Badge>}
+                {isHighlighted && <Badge>Most complete</Badge>}
             </div>
             {plan.description && (
                 <p className="mt-2 text-muted-foreground">{plan.description}</p>
@@ -249,7 +247,7 @@ function PlanCard({
                         variant={isHighlighted ? 'default' : 'outline'}
                         className="w-full"
                     >
-                        <Link href={register()}>Pilih {plan.name}</Link>
+                        <Link href={register()}>Choose {plan.name}</Link>
                     </Button>
                 ) : (
                     <CheckoutButton plan={plan} isHighlighted={isHighlighted} />
@@ -279,9 +277,7 @@ function CheckoutButton({
                     startCheckout(CheckoutController.plan.url(plan.slug))
                 }
             >
-                {isPreparing
-                    ? 'Menyiapkan pembayaran...'
-                    : `Pilih ${plan.name}`}
+                {isPreparing ? 'Preparing payment...' : `Choose ${plan.name}`}
             </Button>
             {error && (
                 <p role="alert" className="text-sm text-destructive">
@@ -299,32 +295,32 @@ function ComparisonTable({
     plans: Plan[];
     maxDevices: number;
 }) {
-    const yesNo = (value: boolean) => (value ? 'Ya' : 'Tidak');
+    const yesNo = (value: boolean) => (value ? 'Yes' : 'No');
     const rows = [
         {
-            label: 'Course yang bisa ditonton',
-            single: 'Course yang dibeli',
-            plan: () => 'Semua',
+            label: 'Courses you can watch',
+            single: 'The purchased course',
+            plan: () => 'All',
         },
         {
-            label: 'Masa akses',
-            single: 'Selamanya',
-            plan: () => 'Selama berlangganan',
+            label: 'Access period',
+            single: 'Lifetime',
+            plan: () => 'While subscribed',
         },
         {
-            label: 'Materi exclusive',
-            single: 'Tidak',
+            label: 'Exclusive lessons',
+            single: 'No',
             plan: (plan: Plan) => yesNo(plan.can_access_exclusive),
         },
         {
-            label: 'Download file latihan',
-            single: 'Tidak',
+            label: 'Practice file downloads',
+            single: 'No',
             plan: (plan: Plan) => yesNo(plan.can_download),
         },
         {
-            label: 'Jumlah perangkat',
-            single: `${maxDevices} perangkat`,
-            plan: () => `${maxDevices} perangkat`,
+            label: 'Devices',
+            single: pluralize(maxDevices, 'device'),
+            plan: () => pluralize(maxDevices, 'device'),
         },
     ];
 
@@ -337,7 +333,7 @@ function ComparisonTable({
                 id="comparison-title"
                 className="font-display text-5xl font-extrabold uppercase"
             >
-                Perbandingan lengkap
+                Full comparison
             </h2>
             {/* Di HP tabel bisa digeser ke samping */}
             <div className="mt-6 overflow-x-auto rounded-md border">
@@ -345,10 +341,10 @@ function ComparisonTable({
                     <thead className="bg-secondary">
                         <tr>
                             <th scope="col" className="px-5 py-4 font-semibold">
-                                Fitur
+                                Feature
                             </th>
                             <th scope="col" className="px-5 py-4 font-semibold">
-                                Beli satuan
+                                Single purchase
                             </th>
                             {plans.map((plan) => (
                                 <th
@@ -382,8 +378,7 @@ function ComparisonTable({
                 </table>
             </div>
             <p className="mt-5 text-sm text-muted-foreground">
-                Pembayaran lewat QRIS, virtual account bank, GoPay, dan
-                ShopeePay.
+                Pay with QRIS, bank virtual account, GoPay, or ShopeePay.
             </p>
         </section>
     );

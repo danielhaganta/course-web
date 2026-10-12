@@ -3,24 +3,24 @@ import FootagePlaceholder from '@/components/footage-placeholder';
 
 // Placeholder, ganti dengan data pengajar asli
 const INSTRUCTOR = {
-    name: '[Nama Pengajar]',
+    name: '[Instructor Name]',
     photoSrc: null,
-    bio: '[Bio singkat: latar belakang sebagai colorist, jenis proyek yang pernah dikerjakan, dan alasan membuka kelas ini.]',
+    bio: '[Short bio: background as a colorist, the kinds of projects worked on, and why this course exists.]',
     projects: [
-        { title: '[Judul proyek]', meta: '[Klien · tahun]' },
-        { title: '[Judul proyek]', meta: '[Klien · tahun]' },
-        { title: '[Judul proyek]', meta: '[Klien · tahun]' },
+        { title: '[Project title]', meta: '[Client · year]' },
+        { title: '[Project title]', meta: '[Client · year]' },
+        { title: '[Project title]', meta: '[Client · year]' },
     ],
 };
 
 export default function Instructor() {
     return (
         <>
-            <Head title="Pengajar">
+            <Head title="Instructor">
                 <meta
                     head-key="description"
                     name="description"
-                    content="Kenali pengajar Poeima Academy: latar belakangnya sebagai colorist dan proyek yang pernah dikerjakan."
+                    content="Meet the Poeima Academy instructor: their background as a colorist and the projects they have worked on."
                 />
             </Head>
 
@@ -32,7 +32,7 @@ export default function Instructor() {
                     {INSTRUCTOR.photoSrc ? (
                         <img
                             src={INSTRUCTOR.photoSrc}
-                            alt={`Foto ${INSTRUCTOR.name}`}
+                            alt={`Photo of ${INSTRUCTOR.name}`}
                             className="absolute inset-0 size-full object-cover"
                         />
                     ) : (
@@ -43,7 +43,7 @@ export default function Instructor() {
                                 className="absolute inset-0"
                             />
                             <span className="absolute bottom-6 left-6 rounded-[3px] bg-background/50 px-2 py-1.5 text-xs font-medium lg:bottom-8 lg:left-10">
-                                [Foto pengajar]
+                                [Instructor photo]
                             </span>
                         </>
                     )}
@@ -51,7 +51,7 @@ export default function Instructor() {
 
                 <div className="flex flex-col justify-end px-6 py-12 lg:flex-1 lg:px-14 lg:pt-28 lg:pb-12">
                     <p className="text-[13px] font-semibold tracking-[0.22em] uppercase">
-                        Pengajar
+                        Instructor
                     </p>
                     <h1
                         id="instructor-title"

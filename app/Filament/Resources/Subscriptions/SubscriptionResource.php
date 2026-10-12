@@ -26,9 +26,9 @@ class SubscriptionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCreditCard;
 
-    protected static ?string $modelLabel = 'langganan';
+    protected static ?string $modelLabel = 'subscription';
 
-    protected static ?string $pluralModelLabel = 'langganan';
+    protected static ?string $pluralModelLabel = 'subscriptions';
 
     public static function form(Schema $schema): Schema
     {
@@ -41,7 +41,7 @@ class SubscriptionResource extends Resource
                     ->searchable(['name', 'email'])
                     ->required(),
                 Select::make('plan_id')
-                    ->label('Paket')
+                    ->label('Plan')
                     ->relationship('plan', 'name')
                     ->required()
                     ->live()
@@ -57,12 +57,12 @@ class SubscriptionResource extends Resource
                             ->toDateTimeString());
                     }),
                 DateTimePicker::make('starts_at')
-                    ->label('Mulai')
+                    ->label('Starts')
                     ->default(now())
                     ->required(),
                 DateTimePicker::make('ends_at')
-                    ->label('Berakhir')
-                    ->helperText('Terisi otomatis dari durasi paket, bisa diubah.')
+                    ->label('Ends')
+                    ->helperText('Filled in from the plan duration. You can change it.')
                     ->after('starts_at')
                     ->required(),
             ]);
@@ -78,39 +78,39 @@ class SubscriptionResource extends Resource
                     ->description(fn (Subscription $record): string => $record->user->email)
                     ->searchable(['name', 'email']),
                 TextColumn::make('plan.name')
-                    ->label('Paket'),
+                    ->label('Plan'),
                 TextColumn::make('starts_at')
-                    ->label('Mulai')
+                    ->label('Starts')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
                 TextColumn::make('ends_at')
-                    ->label('Berakhir')
+                    ->label('Ends')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->state(fn (Subscription $record): string => match (true) {
-                        $record->ends_at->isPast() => 'Berakhir',
-                        $record->starts_at->isFuture() => 'Belum mulai',
-                        default => 'Aktif',
+                        $record->ends_at->isPast() => 'Ended',
+                        $record->starts_at->isFuture() => 'Not started',
+                        default => 'Active',
                     })
                     ->color(fn (string $state): string => match ($state) {
-                        'Aktif' => 'success',
-                        'Belum mulai' => 'info',
+                        'Active' => 'success',
+                        'Not started' => 'info',
                         default => 'gray',
                     }),
             ])
             ->recordActions([
                 Action::make('endNow')
-                    ->label('Akhiri sekarang')
+                    ->label('End now')
                     ->icon(Heroicon::OutlinedStopCircle)
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->modalDescription('Akses member dari langganan ini langsung berhenti.')
+                    ->modalDescription('The member loses access from this subscription immediately.')
                     ->visible(fn (Subscription $record): bool => $record->ends_at->isFuture())
                     ->action(fn (Subscription $record) => $record->update(['ends_at' => now()]))
-                    ->successNotificationTitle('Langganan sudah diakhiri'),
+                    ->successNotificationTitle('Subscription ended'),
                 // Langganan dari order berbayar tetap disimpan sebagai riwayat, cukup diakhiri
                 DeleteAction::make()
                     ->hidden(fn (Subscription $record): bool => $record->order_id !== null),

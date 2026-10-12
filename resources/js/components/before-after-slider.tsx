@@ -105,11 +105,11 @@ export default function BeforeAfterSlider({ before, after, className }: Props) {
                 <div
                     role="slider"
                     tabIndex={0}
-                    aria-label={`Geser untuk membandingkan ${before.label.toLowerCase()} dan ${after.label.toLowerCase()}`}
+                    aria-label={`Drag to compare ${before.label.toLowerCase()} and ${after.label.toLowerCase()}`}
                     aria-valuemin={0}
                     aria-valuemax={100}
                     aria-valuenow={Math.round(position)}
-                    aria-valuetext={`${Math.round(100 - position)}% ${after.label.toLowerCase()} terlihat`}
+                    aria-valuetext={`${Math.round(100 - position)}% ${after.label.toLowerCase()} visible`}
                     onKeyDown={handleKeyDown}
                     className="absolute top-1/2 left-1/2 flex size-11 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-full border-[3px] border-background bg-foreground text-background outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-foreground"
                 >

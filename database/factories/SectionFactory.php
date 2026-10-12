@@ -21,12 +21,12 @@ class SectionFactory extends Factory
         return [
             'course_id' => Course::factory(),
             'title' => fake()->randomElement([
-                'Pengenalan',
-                'Persiapan Project',
-                'Teknik Dasar',
-                'Teknik Lanjutan',
-                'Studi Kasus',
-                'Finishing dan Export',
+                'Introduction',
+                'Project Setup',
+                'Basic Techniques',
+                'Advanced Techniques',
+                'Case Studies',
+                'Finishing and Export',
             ]),
             'sort_order' => 0,
         ];

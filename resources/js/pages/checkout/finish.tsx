@@ -4,6 +4,7 @@ import type { LucideIcon } from 'lucide-react';
 import CheckoutController from '@/actions/App/Http/Controllers/CheckoutController';
 import { Button } from '@/components/ui/button';
 import { formatRupiah } from '@/lib/currency';
+import { formatDateTime } from '@/lib/date';
 import { cn } from '@/lib/utils';
 import { dashboard, pricing } from '@/routes';
 import { index as coursesIndex, show as showCourse } from '@/routes/courses';
@@ -18,28 +19,28 @@ const STATUS_DISPLAY: Record<
     { title: string; description: string; icon: LucideIcon; tone: string }
 > = {
     paid: {
-        title: 'Pembayaran berhasil',
-        description: 'Akses kamu sudah aktif.',
+        title: 'Payment successful',
+        description: 'Your access is now active.',
         icon: CircleCheck,
         tone: 'text-foreground',
     },
     pending: {
-        title: 'Menunggu pembayaran',
+        title: 'Awaiting payment',
         description:
-            'Selesaikan pembayaran sesuai instruksi. Akses aktif otomatis setelah pembayaran diterima.',
+            'Complete the payment by following the instructions. Your access turns on automatically once we receive it.',
         icon: Clock,
         tone: 'text-foreground-soft',
     },
     failed: {
-        title: 'Pembayaran gagal',
-        description: 'Pembayaran tidak berhasil diproses. Silakan coba lagi.',
+        title: 'Payment failed',
+        description: "The payment couldn't be processed. Please try again.",
         icon: CircleX,
         tone: 'text-destructive-foreground',
     },
     expired: {
-        title: 'Pembayaran kedaluwarsa',
+        title: 'Payment expired',
         description:
-            'Batas waktu pembayaran sudah lewat. Silakan buat pesanan baru.',
+            'The payment deadline has passed. Please place a new order.',
         icon: TimerOff,
         tone: 'text-muted-foreground',
     },
@@ -64,15 +65,15 @@ export default function CheckoutFinish({ order }: Props) {
                 </div>
 
                 <dl className="w-full divide-y rounded-md border bg-card text-left text-sm">
-                    <OrderRow label="Pesanan" value={order.item.name} />
+                    <OrderRow label="Item" value={order.item.name} />
                     <OrderRow
                         label="Total"
                         value={formatRupiah(order.amount)}
                     />
-                    <OrderRow label="Kode pesanan" value={order.code} />
+                    <OrderRow label="Order code" value={order.code} />
                     {order.status === 'pending' && (
                         <OrderRow
-                            label="Bayar sebelum"
+                            label="Pay before"
                             value={formatDateTime(order.expires_at)}
                         />
                     )}
@@ -106,8 +107,8 @@ function OrderActions({ order }: Props) {
                 {({ processing }) => (
                     <Button className="w-full" disabled={processing}>
                         {processing
-                            ? 'Mengecek status...'
-                            : 'Cek status pembayaran'}
+                            ? 'Checking status...'
+                            : 'Check payment status'}
                     </Button>
                 )}
             </Form>
@@ -125,11 +126,11 @@ function OrderActions({ order }: Props) {
                                 : coursesIndex()
                         }
                     >
-                        {isCourse ? 'Mulai belajar' : 'Lihat semua course'}
+                        {isCourse ? 'Start learning' : 'Browse all courses'}
                     </Link>
                 </Button>
                 <Button asChild variant="outline" className="flex-1">
-                    <Link href={dashboard()}>Ke dashboard</Link>
+                    <Link href={dashboard()}>Go to dashboard</Link>
                 </Button>
             </div>
         );
@@ -138,16 +139,8 @@ function OrderActions({ order }: Props) {
     return (
         <Button asChild className="w-full">
             <Link href={isCourse ? showCourse(order.item.slug) : pricing()}>
-                Coba lagi
+                Try again
             </Link>
         </Button>
     );
-}
-
-function formatDateTime(isoDate: string): string {
-    return new Date(isoDate).toLocaleString('id-ID', {
-        dateStyle: 'long',
-        timeStyle: 'short',
-        timeZone: 'Asia/Jakarta',
-    });
 }

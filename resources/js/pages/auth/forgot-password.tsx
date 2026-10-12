@@ -12,7 +12,7 @@ import { email } from '@/routes/password';
 export default function ForgotPassword({ status }: { status?: string }) {
     return (
         <>
-            <Head title="Lupa password" />
+            <Head title="Forgot password" />
 
             {status && (
                 <div className="mb-4 rounded-[4px] border px-4 py-3 text-center text-sm">
@@ -32,7 +32,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                     name="email"
                                     autoComplete="off"
                                     autoFocus
-                                    placeholder="email@contoh.com"
+                                    placeholder="email@example.com"
                                 />
 
                                 <InputError message={errors.email} />
@@ -47,7 +47,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
                                     {processing && (
                                         <LoaderCircle className="h-4 w-4 animate-spin" />
                                     )}
-                                    Kirim link reset password
+                                    Send password reset link
                                 </Button>
                             </div>
                         </>
@@ -55,8 +55,8 @@ export default function ForgotPassword({ status }: { status?: string }) {
                 </Form>
 
                 <div className="space-x-1 text-center text-sm text-muted-foreground">
-                    <span>Ingat lagi passwordnya?</span>
-                    <TextLink href={login()}>Masuk</TextLink>
+                    <span>Remembered your password?</span>
+                    <TextLink href={login()}>Log in</TextLink>
                 </div>
             </div>
         </>
@@ -64,7 +64,7 @@ export default function ForgotPassword({ status }: { status?: string }) {
 }
 
 ForgotPassword.layout = {
-    title: 'Lupa password',
+    title: 'Forgot password',
     description:
-        'Masukkan email akunmu, kami kirimkan link untuk membuat password baru',
+        "Enter your account email and we'll send you a link to set a new password",
 };

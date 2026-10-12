@@ -131,7 +131,7 @@ class Midtrans
             'qris' => 'QRIS',
             'gopay' => 'GoPay',
             'shopeepay' => 'ShopeePay',
-            'credit_card' => 'Kartu kredit',
+            'credit_card' => 'Credit card',
             default => Str::headline($order->payment_type),
         };
     }

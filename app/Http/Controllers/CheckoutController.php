@@ -38,7 +38,7 @@ class CheckoutController extends Controller
         abort_unless($course->is_published && $course->price !== null, 404);
 
         if ($request->user()->coursePurchases()->where('course_id', $course->id)->exists()) {
-            throw ValidationException::withMessages(['course' => 'Kamu sudah memiliki course ini.']);
+            throw ValidationException::withMessages(['course' => 'You already own this course.']);
         }
 
         return $this->startCheckout($request->user(), $course);
@@ -77,15 +77,15 @@ class CheckoutController extends Controller
                 $this->orders->syncStatus($order);
             } catch (ConnectionException|RequestException $exception) {
                 Log::error('Gagal cek status pembayaran', ['order' => $order->code, 'error' => $exception->getMessage()]);
-                Inertia::flash('toast', ['type' => 'error', 'message' => 'Status belum bisa dicek. Coba lagi beberapa saat.']);
+                Inertia::flash('toast', ['type' => 'error', 'message' => 'We couldn\'t check the status. Please try again in a moment.']);
 
                 return back();
             }
         }
 
         Inertia::flash('toast', $order->refresh()->status === OrderStatus::Pending
-            ? ['type' => 'info', 'message' => 'Pembayaran belum diterima.']
-            : ['type' => 'success', 'message' => 'Status pembayaran sudah diperbarui.']);
+            ? ['type' => 'info', 'message' => 'Payment not received yet.']
+            : ['type' => 'success', 'message' => 'Payment status updated.']);
 
         return back();
     }
@@ -97,7 +97,7 @@ class CheckoutController extends Controller
         } catch (ConnectionException|RequestException $exception) {
             Log::error('Gagal membuat transaksi pembayaran', ['user' => $user->id, 'error' => $exception->getMessage()]);
 
-            return response()->json(['message' => 'Pembayaran belum bisa disiapkan. Coba lagi beberapa saat.'], 502);
+            return response()->json(['message' => 'We couldn\'t prepare the payment. Please try again in a moment.'], 502);
         }
 
         return response()->json([

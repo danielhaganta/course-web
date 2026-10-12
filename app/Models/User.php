@@ -8,7 +8,6 @@ use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Panel;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -34,7 +33,7 @@ use Illuminate\Support\Collection;
  */
 #[Fillable(['name', 'email', 'password'])]
 #[Hidden(['password', 'two_factor_secret', 'two_factor_recovery_codes', 'remember_token'])]
-class User extends Authenticatable implements FilamentUser, HasLocalePreference, MustVerifyEmail
+class User extends Authenticatable implements FilamentUser, MustVerifyEmail
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -47,12 +46,6 @@ class User extends Authenticatable implements FilamentUser, HasLocalePreference,
     public function canAccessPanel(Panel $panel): bool
     {
         return $this->is_admin;
-    }
-
-    // Semua email ke user memakai bahasa Indonesia, termasuk teks bawaan template mail
-    public function preferredLocale(): string
-    {
-        return 'id';
     }
 
     public function sendEmailVerificationNotification(): void

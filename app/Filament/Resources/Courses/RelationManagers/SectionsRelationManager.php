@@ -13,7 +13,7 @@ class SectionsRelationManager extends RelationManager
 
     protected static ?string $relatedResource = SectionResource::class;
 
-    protected static ?string $title = 'Bagian';
+    protected static ?string $title = 'Sections';
 
     public function table(Table $table): Table
     {

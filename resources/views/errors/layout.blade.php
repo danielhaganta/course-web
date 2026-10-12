@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="id" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,7 +28,7 @@
             <p class="mt-5 max-w-md leading-relaxed text-foreground-soft">@yield('message')</p>
 
             <a href="{{ url('/') }}" class="mt-9 inline-flex h-12 items-center rounded-[3px] bg-primary px-7 text-[15px] font-semibold text-primary-foreground transition-colors hover:bg-primary/85">
-                Kembali ke beranda
+                Back to home
             </a>
         </main>
     </body>

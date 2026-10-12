@@ -59,7 +59,7 @@ test('revenue only counts paid orders in the right month', function () {
         ->assertSeeText(rupiah(1_398_000))
         ->assertSeeText(rupiah(1_490_000))
         ->assertDontSeeText(rupiah(999_000))
-        ->assertSeeInOrder(['Order berhasil bulan ini', '3', 'Member berlangganan aktif', '2']);
+        ->assertSeeInOrder(['Paid orders this month', '3', 'Active subscribers', '2']);
 });
 
 test('admin can end a subscription now', function () {

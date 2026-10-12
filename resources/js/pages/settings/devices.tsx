@@ -4,6 +4,7 @@ import DeviceController from '@/actions/App/Http/Controllers/Settings/DeviceCont
 import Heading from '@/components/heading';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { pluralize } from '@/lib/utils';
 import { edit } from '@/routes/devices';
 
 type DeviceSession = {
@@ -26,18 +27,18 @@ export default function Devices({ sessions, maxDevices }: Props) {
 
     return (
         <>
-            <Head title="Perangkat aktif" />
+            <Head title="Active devices" />
 
-            <h1 className="sr-only">Perangkat aktif</h1>
+            <h1 className="sr-only">Active devices</h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Perangkat aktif"
+                    title="Active devices"
                     description={
                         maxDevices === null
-                            ? 'Akun admin tidak dibatasi jumlah perangkat.'
-                            : `Akun ini bisa dipakai di maksimal ${maxDevices} perangkat sekaligus.`
+                            ? 'Admin accounts have no device limit.'
+                            : `This account can be used on up to ${pluralize(maxDevices, 'device')} at once.`
                     }
                 />
 
@@ -54,7 +55,7 @@ export default function Devices({ sessions, maxDevices }: Props) {
                     >
                         {({ processing }) => (
                             <Button variant="destructive" disabled={processing}>
-                                Keluarkan semua perangkat lain
+                                Sign out all other devices
                             </Button>
                         )}
                     </Form>
@@ -76,15 +77,15 @@ function DeviceRow({ session }: { session: DeviceSession }) {
             />
             <div className="min-w-0 flex-1">
                 <p className="font-medium">
-                    {session.browser} di {session.platform}
+                    {session.browser} on {session.platform}
                 </p>
                 <p className="text-muted-foreground">
-                    {session.ip_address ?? 'IP tidak diketahui'} · Aktif{' '}
+                    {session.ip_address ?? 'Unknown IP'} · Active{' '}
                     {session.last_active}
                 </p>
             </div>
             {session.is_current ? (
-                <Badge variant="secondary">Perangkat ini</Badge>
+                <Badge variant="secondary">This device</Badge>
             ) : (
                 <Form
                     {...DeviceController.destroy.form(session.key)}
@@ -96,7 +97,7 @@ function DeviceRow({ session }: { session: DeviceSession }) {
                             size="sm"
                             disabled={processing}
                         >
-                            Keluarkan
+                            Sign out
                         </Button>
                     )}
                 </Form>
@@ -108,7 +109,7 @@ function DeviceRow({ session }: { session: DeviceSession }) {
 Devices.layout = {
     breadcrumbs: [
         {
-            title: 'Perangkat aktif',
+            title: 'Active devices',
             href: edit(),
         },
     ],

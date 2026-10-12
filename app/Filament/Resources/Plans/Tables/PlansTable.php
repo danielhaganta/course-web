@@ -16,14 +16,14 @@ class PlansTable
             ->defaultSort('sort_order')
             ->columns([
                 TextColumn::make('name')
-                    ->label('Nama')
+                    ->label('Name')
                     ->searchable(),
                 TextColumn::make('price')
-                    ->label('Harga')
+                    ->label('Price')
                     ->money('IDR', locale: 'id', decimalPlaces: 0),
                 TextColumn::make('duration_days')
-                    ->label('Durasi')
-                    ->suffix(' hari'),
+                    ->label('Duration')
+                    ->suffix(' days'),
                 IconColumn::make('can_access_exclusive')
                     ->label('Exclusive')
                     ->boolean(),
@@ -31,7 +31,7 @@ class PlansTable
                     ->label('Download')
                     ->boolean(),
                 IconColumn::make('is_active')
-                    ->label('Aktif')
+                    ->label('Active')
                     ->boolean(),
             ])
             // Tanpa delete: plan yang punya langganan tidak bisa dihapus, nonaktifkan saja

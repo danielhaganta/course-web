@@ -32,22 +32,22 @@ class LessonsRelationManager extends RelationManager
 {
     protected static string $relationship = 'lessons';
 
-    protected static ?string $title = 'Materi';
+    protected static ?string $title = 'Lessons';
 
-    protected static ?string $modelLabel = 'materi';
+    protected static ?string $modelLabel = 'lesson';
 
-    protected static ?string $pluralModelLabel = 'materi';
+    protected static ?string $pluralModelLabel = 'lessons';
 
     public function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('title')
-                    ->label('Judul')
+                    ->label('Title')
                     ->required()
                     ->maxLength(255),
                 Select::make('type')
-                    ->label('Tipe')
+                    ->label('Type')
                     ->options(LessonType::class)
                     ->default(LessonType::Video)
                     ->required()
@@ -58,27 +58,27 @@ class LessonsRelationManager extends RelationManager
                     ->visible(fn (Get $get): bool => $get('type') === LessonType::Video)
                     ->required(fn (Get $get): bool => $get('type') === LessonType::Video),
                 TextInput::make('duration_seconds')
-                    ->label('Durasi')
-                    ->helperText('Dalam detik. Untuk video, terisi otomatis dari Bunny saat disimpan.')
-                    ->suffix('detik')
+                    ->label('Duration')
+                    ->helperText('In seconds. For videos, it is filled in from Bunny on save.')
+                    ->suffix('seconds')
                     ->integer()
                     ->minValue(0)
                     ->default(0)
                     ->required(),
                 RichEditor::make('content')
-                    ->label('Konten')
+                    ->label('Content')
                     ->visible(fn (Get $get): bool => $get('type') === LessonType::Text)
                     ->columnSpanFull(),
                 Toggle::make('is_preview')
                     ->label('Preview')
-                    ->helperText('Bisa ditonton tanpa langganan'),
+                    ->helperText('Watchable without a subscription'),
                 Toggle::make('is_exclusive')
                     ->label('Exclusive')
-                    ->helperText('Hanya untuk member Premium'),
+                    ->helperText('Premium members only'),
                 Repeater::make('attachments')
-                    ->label('File latihan')
+                    ->label('Practice files')
                     ->relationship()
-                    ->addActionLabel('Tambah file')
+                    ->addActionLabel('Add file')
                     ->defaultItems(0)
                     ->columns(2)
                     ->columnSpanFull()
@@ -93,8 +93,8 @@ class LessonsRelationManager extends RelationManager
                             ->previewable(false)
                             ->required(),
                         TextInput::make('name')
-                            ->label('Nama tampil')
-                            ->helperText('Kosongkan untuk memakai nama file asli.')
+                            ->label('Display name')
+                            ->helperText('Leave empty to use the original file name.')
                             ->maxLength(255),
                     ])
                     ->mutateRelationshipDataBeforeCreateUsing(fn (array $data, Repeater $component): array => $this->storeAttachment($data, $component))
@@ -129,7 +129,7 @@ class LessonsRelationManager extends RelationManager
                 "lessons/{$lessonId}",
                 Str::random(40).($extension === '' ? '' : ".{$extension}"),
                 LessonAttachment::diskName(),
-            ) ?: throw new RuntimeException('Gagal menyimpan file latihan.'),
+            ) ?: throw new RuntimeException('Could not save the practice file.'),
             'size_bytes' => $file->getSize(),
         ];
         $file->delete();
@@ -145,12 +145,12 @@ class LessonsRelationManager extends RelationManager
             ->defaultSort('sort_order')
             ->columns([
                 TextColumn::make('title')
-                    ->label('Judul'),
+                    ->label('Title'),
                 TextColumn::make('type')
-                    ->label('Tipe')
+                    ->label('Type')
                     ->badge(),
                 TextColumn::make('duration_seconds')
-                    ->label('Durasi')
+                    ->label('Duration')
                     ->formatStateUsing(fn (int $state): string => sprintf('%d:%02d', intdiv($state, 60), $state % 60)),
                 IconColumn::make('is_preview')
                     ->label('Preview')

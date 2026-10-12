@@ -23,7 +23,7 @@ class LessonAttachmentFactory extends Factory
             'lesson_id' => Lesson::factory(),
             'name' => fake()->randomElement([
                 'File Project.zip',
-                'Footage Latihan.zip',
+                'Practice Footage.zip',
                 'LUT Pack.zip',
                 'Preset Color Grading.zip',
             ]),

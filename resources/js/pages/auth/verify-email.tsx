@@ -9,12 +9,12 @@ import { send } from '@/routes/verification';
 export default function VerifyEmail({ status }: { status?: string }) {
     return (
         <>
-            <Head title="Verifikasi email" />
+            <Head title="Verify email" />
 
             {status === 'verification-link-sent' && (
                 <div className="mb-4 rounded-[4px] border px-4 py-3 text-center text-sm">
-                    Link verifikasi baru sudah dikirim ke email yang kamu
-                    daftarkan.
+                    A new verification link has been sent to the email you
+                    signed up with.
                 </div>
             )}
 
@@ -23,14 +23,14 @@ export default function VerifyEmail({ status }: { status?: string }) {
                     <>
                         <Button disabled={processing} variant="outline">
                             {processing && <Spinner />}
-                            Kirim ulang email verifikasi
+                            Resend verification email
                         </Button>
 
                         <TextLink
                             href={logout()}
                             className="mx-auto block text-sm"
                         >
-                            Keluar
+                            Log out
                         </TextLink>
                     </>
                 )}
@@ -40,7 +40,7 @@ export default function VerifyEmail({ status }: { status?: string }) {
 }
 
 VerifyEmail.layout = {
-    title: 'Verifikasi email',
+    title: 'Verify email',
     description:
-        'Buka email dari kami dan klik link verifikasi untuk mengaktifkan akunmu.',
+        'Open the email we sent you and click the verification link to activate your account.',
 };

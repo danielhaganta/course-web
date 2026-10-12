@@ -23,11 +23,9 @@ export default function LessonAttachments({ attachments, canDownload }: Props) {
         >
             <div className="flex flex-wrap items-center justify-between gap-3">
                 <h2 id="attachments-title" className="text-lg font-semibold">
-                    File latihan
+                    Practice files
                 </h2>
-                {!canDownload && (
-                    <Badge variant="outline">Khusus Premium</Badge>
-                )}
+                {!canDownload && <Badge variant="outline">Premium only</Badge>}
             </div>
             <ul className="mt-4 space-y-2.5">
                 {attachments.map((attachment) => (
@@ -60,12 +58,12 @@ export default function LessonAttachments({ attachments, canDownload }: Props) {
             </ul>
             {!canDownload && (
                 <p className="mt-4 text-sm text-muted-foreground">
-                    Khusus member Premium.{' '}
+                    For Premium members only.{' '}
                     <Link
                         href={pricing()}
                         className="text-foreground underline underline-offset-4"
                     >
-                        Lihat paket
+                        See plans
                     </Link>
                 </p>
             )}
@@ -77,7 +75,7 @@ export default function LessonAttachments({ attachments, canDownload }: Props) {
 function formatFileSize(bytes: number): string {
     const megabytes = bytes / 1024 ** 2;
     const format = (value: number) =>
-        value.toLocaleString('id-ID', { maximumFractionDigits: 1 });
+        value.toLocaleString('en-US', { maximumFractionDigits: 1 });
 
     if (megabytes >= 1024) {
         return `${format(megabytes / 1024)} GB`;

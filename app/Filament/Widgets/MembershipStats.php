@@ -22,10 +22,10 @@ class MembershipStats extends StatsOverviewWidget
         $lastMonthEnd = $now->subMonthNoOverflow()->endOfMonth()->utc();
 
         return [
-            Stat::make('Pemasukan bulan ini', $this->rupiah(Order::paidBetween($thisMonthStart, $thisMonthEnd)->sum('amount'))),
-            Stat::make('Pemasukan bulan lalu', $this->rupiah(Order::paidBetween($lastMonthStart, $lastMonthEnd)->sum('amount'))),
-            Stat::make('Order berhasil bulan ini', Order::paidBetween($thisMonthStart, $thisMonthEnd)->count()),
-            Stat::make('Member berlangganan aktif', Subscription::active()->distinct()->count('user_id')),
+            Stat::make('Revenue this month', $this->rupiah(Order::paidBetween($thisMonthStart, $thisMonthEnd)->sum('amount'))),
+            Stat::make('Revenue last month', $this->rupiah(Order::paidBetween($lastMonthStart, $lastMonthEnd)->sum('amount'))),
+            Stat::make('Paid orders this month', Order::paidBetween($thisMonthStart, $thisMonthEnd)->count()),
+            Stat::make('Active subscribers', Subscription::active()->distinct()->count('user_id')),
         ];
     }
 

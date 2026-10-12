@@ -31,12 +31,12 @@ const mainNavItems: NavItem[] = [
         icon: BookOpen,
     },
     {
-        title: 'Paket',
+        title: 'Pricing',
         href: pricing(),
         icon: Tag,
     },
     {
-        title: 'Riwayat pembayaran',
+        title: 'Payment history',
         href: ordersIndex(),
         icon: Receipt,
     },

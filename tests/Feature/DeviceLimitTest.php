@@ -43,7 +43,7 @@ test('login on a third device logs out the least recently active session', funct
 
     $this->post(route('login.store'), ['email' => $user->email, 'password' => 'password'])
         ->assertRedirect()
-        ->assertSessionHas(SessionKey::FLASH_DATA.'.toast.message', 'Kamu login di perangkat baru. Perangkat lama yang tidak aktif sudah dikeluarkan.');
+        ->assertSessionHas(SessionKey::FLASH_DATA.'.toast.message', 'You signed in on a new device. Your older inactive device has been signed out.');
 
     $sessionIds = sessionIdsOf($user);
     expect($sessionIds)->toHaveCount(2)

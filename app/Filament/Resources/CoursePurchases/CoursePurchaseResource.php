@@ -21,9 +21,9 @@ class CoursePurchaseResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShoppingBag;
 
-    protected static ?string $modelLabel = 'pembelian course';
+    protected static ?string $modelLabel = 'course purchase';
 
-    protected static ?string $pluralModelLabel = 'pembelian course';
+    protected static ?string $pluralModelLabel = 'course purchases';
 
     public static function form(Schema $schema): Schema
     {
@@ -42,7 +42,7 @@ class CoursePurchaseResource extends Resource
                     ->preload()
                     ->required()
                     ->unique(modifyRuleUsing: fn (Unique $rule, Get $get): Unique => $rule->where('user_id', $get('user_id')))
-                    ->validationMessages(['unique' => 'User ini sudah punya akses ke course tersebut.']),
+                    ->validationMessages(['unique' => 'This user already has access to this course.']),
             ]);
     }
 
@@ -59,7 +59,7 @@ class CoursePurchaseResource extends Resource
                     ->label('Course')
                     ->searchable(),
                 TextColumn::make('created_at')
-                    ->label('Tanggal')
+                    ->label('Date')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
             ]);

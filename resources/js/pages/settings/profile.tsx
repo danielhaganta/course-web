@@ -26,15 +26,15 @@ export default function Profile({
 
     return (
         <>
-            <Head title="Profil" />
+            <Head title="Profile" />
 
-            <h1 className="sr-only">Profil</h1>
+            <h1 className="sr-only">Profile</h1>
 
             <div className="space-y-6">
                 <Heading
                     variant="small"
-                    title="Profil"
-                    description="Ubah nama dan alamat email"
+                    title="Profile"
+                    description="Update your name and email address"
                 />
 
                 <Form
@@ -47,7 +47,7 @@ export default function Profile({
                     {({ processing, errors }) => (
                         <>
                             <div className="grid gap-2">
-                                <Label htmlFor="name">Nama</Label>
+                                <Label htmlFor="name">Name</Label>
 
                                 <Input
                                     id="name"
@@ -56,7 +56,7 @@ export default function Profile({
                                     name="name"
                                     required
                                     autoComplete="name"
-                                    placeholder="Nama lengkap"
+                                    placeholder="Full name"
                                 />
 
                                 <InputError
@@ -66,7 +66,7 @@ export default function Profile({
                             </div>
 
                             <div className="grid gap-2">
-                                <Label htmlFor="email">Alamat email</Label>
+                                <Label htmlFor="email">Email address</Label>
 
                                 <Input
                                     id="email"
@@ -76,7 +76,7 @@ export default function Profile({
                                     name="email"
                                     required
                                     autoComplete="username"
-                                    placeholder="email@contoh.com"
+                                    placeholder="email@example.com"
                                 />
 
                                 <InputError
@@ -89,21 +89,21 @@ export default function Profile({
                                 auth.user.email_verified_at === null && (
                                     <div>
                                         <p className="-mt-4 text-sm text-muted-foreground">
-                                            Email kamu belum diverifikasi.{' '}
+                                            Your email is not verified yet.{' '}
                                             <Link
                                                 href={send()}
                                                 as="button"
                                                 className="text-foreground underline decoration-foreground/40 underline-offset-4 transition-colors hover:decoration-foreground"
                                             >
-                                                Kirim ulang email verifikasi.
+                                                Resend verification email.
                                             </Link>
                                         </p>
 
                                         {status ===
                                             'verification-link-sent' && (
                                             <div className="mt-2 text-sm font-medium">
-                                                Link verifikasi baru sudah
-                                                dikirim ke email kamu.
+                                                A new verification link has been
+                                                sent to your email.
                                             </div>
                                         )}
                                     </div>
@@ -114,7 +114,7 @@ export default function Profile({
                                     disabled={processing}
                                     data-test="update-profile-button"
                                 >
-                                    Simpan
+                                    Save
                                 </Button>
                             </div>
                         </>
@@ -130,7 +130,7 @@ export default function Profile({
 Profile.layout = {
     breadcrumbs: [
         {
-            title: 'Profil',
+            title: 'Profile',
             href: edit(),
         },
     ],

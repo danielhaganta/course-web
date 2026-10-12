@@ -39,7 +39,7 @@ Stack:
 - **Tulis komentar hanya untuk hal penting**: alasan di balik keputusan, aturan bisnis, atau bagian yang tidak jelas dari kodenya sendiri.
 - **Jangan berkomentar untuk hal yang sudah jelas** dari kodenya (misalnya `// simpan user` di atas `$user->save()`).
 - **Bahasa komentar to the point**, seperti catatan developer. Tidak bertele-tele, tidak memakai gaya bahasa AI, tidak ada basa-basi seperti "Fungsi ini bertugas untuk...", "Mari kita...", atau "Berikut adalah...".
-- Komentar dalam bahasa Indonesia singkat.
+- Komentar kode tetap dalam bahasa Indonesia singkat, walaupun teks yang tampil ke user dalam bahasa Inggris.
 
 Contoh:
 
@@ -62,6 +62,7 @@ Contoh:
 - **Jangan mengubah migration yang sudah dijalankan atau sudah di-push.** Buat migration baru untuk perubahan tabel.
 - Nominal uang disimpan sebagai integer rupiah, bukan float.
 - Timezone `Asia/Jakarta`.
+- Semua teks yang tampil ke user dalam bahasa Inggris: halaman, pesan validasi dan notifikasi, email, dan admin panel. URL juga berbahasa Inggris. Harga tetap Rupiah (`Rp 149.000`), tanggal format Inggris (`12 Oct 2026`) dalam WIB.
 - Akses hanya diaktifkan dari webhook pembayaran yang signature-nya valid, tidak dari callback frontend.
 
 ## React & TypeScript
@@ -72,7 +73,7 @@ Contoh:
 - Styling pakai Tailwind. Tidak ada file CSS terpisah per komponen.
 - Ikuti cara starter kit untuk route dan form (Inertia `router`, `useForm`, dan route helper yang sudah dipakai di project).
 - Komponen kecil dan fokus. Pecah kalau satu file sudah terlalu panjang atau mengerjakan banyak hal.
-- Teks yang tampil ke user dalam bahasa Indonesia, singkat, dan jelas.
+- Teks yang tampil ke user dalam bahasa Inggris yang natural, singkat, dan jelas.
 - Perhatikan dasar aksesibilitas: label pada input, `alt` pada gambar, tombol pakai `<button>`.
 - Tampilan harus responsif dan nyaman di HP.
 

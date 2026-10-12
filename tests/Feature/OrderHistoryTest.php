@@ -18,9 +18,9 @@ test('member only sees their own orders, newest first', function () {
             ->component('orders/index')
             ->has('orders', 2)
             ->where('orders.0.code', $newer->code)
-            ->where('orders.0.status_label', 'Berhasil')
+            ->where('orders.0.status_label', 'Paid')
             ->where('orders.1.code', $older->code)
-            ->where('orders.1.status_label', 'Menunggu pembayaran'));
+            ->where('orders.1.status_label', 'Awaiting payment'));
 });
 
 test('continue payment is only offered for pending orders that have not expired', function (array $attributes, bool $isPayable) {

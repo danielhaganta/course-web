@@ -60,7 +60,7 @@ export default function LessonShow({
                     <div className="mt-7 flex flex-wrap items-start justify-between gap-5">
                         <div className="min-w-0">
                             <p className="text-sm text-muted-foreground">
-                                Bagian {sectionIndex + 1} · Materi{' '}
+                                Section {sectionIndex + 1} · Lesson{' '}
                                 {lessonNumber + 1}
                             </p>
                             <h1 className="mt-2 font-display text-[clamp(36px,4vw,52px)] leading-none font-extrabold uppercase">
@@ -79,7 +79,7 @@ export default function LessonShow({
                     </div>
 
                     <nav
-                        aria-label="Navigasi materi"
+                        aria-label="Lesson navigation"
                         className="mt-6 flex flex-wrap gap-3"
                     >
                         <LessonNavButton
@@ -151,7 +151,7 @@ function CompletionToggle({
                             className={cn(!isCompleted && 'opacity-40')}
                             aria-hidden
                         />
-                        {isCompleted ? 'Selesai ditonton' : 'Tandai selesai'}
+                        {isCompleted ? 'Completed' : 'Mark as completed'}
                     </Button>
                 </>
             )}
@@ -181,7 +181,7 @@ function LessonContent({
     if (!embedUrl) {
         return (
             <div className="flex aspect-video items-center justify-center rounded-[4px] bg-card text-muted-foreground">
-                Video belum tersedia.
+                Video not available yet.
             </div>
         );
     }
@@ -220,11 +220,11 @@ function LessonNavButton({
     const isNext = direction === 'next';
     const content = isNext ? (
         <>
-            Materi berikutnya <ChevronRight />
+            Next lesson <ChevronRight />
         </>
     ) : (
         <>
-            <ChevronLeft /> Materi sebelumnya
+            <ChevronLeft /> Previous lesson
         </>
     );
     const variant = isNext ? 'default' : 'outline';

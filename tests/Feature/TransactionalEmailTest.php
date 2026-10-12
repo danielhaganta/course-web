@@ -12,16 +12,10 @@ use App\Notifications\VerifyEmailNotification;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Support\Carbon;
 
-beforeEach(function () {
-    // Saat dikirim, locale diambil dari User::preferredLocale(). Di sini email dirender langsung.
-    app()->setLocale('id');
-});
-
-test('emails are queued and sent in Indonesian', function () {
+test('emails are queued and sent in English', function () {
     $user = User::factory()->create();
 
-    expect($user->preferredLocale())->toBe('id')
-        ->and(new VerifyEmailNotification)->toBeInstanceOf(ShouldQueue::class)
+    expect(new VerifyEmailNotification)->toBeInstanceOf(ShouldQueue::class)
         ->and(new ResetPasswordNotification('token'))->toBeInstanceOf(ShouldQueue::class)
         ->and(new PaymentReceipt(Order::factory()->create()))->toBeInstanceOf(ShouldQueue::class);
 
@@ -29,15 +23,15 @@ test('emails are queued and sent in Indonesian', function () {
     $reset = (new ResetPasswordNotification('token'))->toMail($user);
     $html = (string) $verify->render();
 
-    expect($verify->subject)->toBe('Verifikasi email akun Poeima Academy')
-        ->and($reset->subject)->toBe('Reset password akun Poeima Academy')
-        ->and($html)->toContain('Verifikasi email')
-        ->toContain('Kalau tombol')
+    expect($verify->subject)->toBe('Verify your Poeima Academy email')
+        ->and($reset->subject)->toBe('Reset your Poeima Academy password')
+        ->and($html)->toContain('Verify email')
+        ->toContain('having trouble clicking')
         ->toContain('Poeima Academy');
 });
 
 test('plan receipt shows the order and the subscription end date', function () {
-    $plan = Plan::factory()->premium()->create(['name' => 'Premium Bulanan', 'price' => 249_000]);
+    $plan = Plan::factory()->premium()->create(['name' => 'Premium Monthly', 'price' => 249_000]);
     $order = Order::factory()->paid()->create([
         'purchasable_id' => $plan->id,
         'amount' => 249_000,
@@ -49,35 +43,44 @@ test('plan receipt shows the order and the subscription end date', function () {
     $mail = (new PaymentReceipt($order, $subscription))->toMail($order->user);
     $html = (string) $mail->render();
 
-    expect($mail->subject)->toBe('Pembayaran berhasil: Premium Bulanan')
+    expect($mail->subject)->toBe('Payment received: Premium Monthly')
         ->and($html)->toContain($order->code)
-        ->toContain('Paket Premium Bulanan')
+        ->toContain('Premium Monthly plan')
+        ->toContain('Rp')
         ->toContain('249.000')
         ->toContain('QRIS')
-        ->toContain('12 Oktober 2026, 20.00 WIB')
-        ->toContain('11 November 2026, 20.00 WIB')
+        ->toContain('12 Oct 2026, 20:00 WIB')
+        ->toContain('11 Nov 2026, 20:00 WIB')
         ->toContain(route('dashboard'));
 });
 
 test('course receipt mentions lifetime access', function () {
-    $course = Course::factory()->published()->create(['title' => 'Color Grading Dasar', 'price' => 299_000]);
+    $course = Course::factory()->published()->create(['title' => 'Color Grading Basics', 'price' => 299_000]);
     $order = Order::factory()->forCourse($course)->paid()->create();
 
     $html = (string) (new PaymentReceipt($order))->toMail($order->user)->render();
 
-    expect($html)->toContain('Course Color Grading Dasar')
-        ->toContain('akses selamanya');
+    expect($html)->toContain('Color Grading Basics course')
+        ->toContain('lifetime access');
 });
 
 test('reminder lists what premium members lose', function () {
-    $subscription = Subscription::factory()->for(Plan::factory()->premium()->create(['name' => 'Premium Bulanan']))->create();
+    $subscription = Subscription::factory()->for(Plan::factory()->premium()->create(['name' => 'Premium Monthly']))->create();
 
     $mail = (new SubscriptionReminder($subscription, 7))->toMail($subscription->user);
     $html = (string) $mail->render();
 
-    expect($mail->subject)->toBe('Langganan Premium Bulanan kamu berakhir dalam 7 hari')
-        ->and($html)->toContain('Akses ke semua course')
-        ->toContain('Materi exclusive')
-        ->toContain('Download file latihan')
+    expect($mail->subject)->toBe('Your Premium Monthly subscription ends in 7 days')
+        ->and($html)->toContain('Access to all courses')
+        ->toContain('Premium-only exclusive lessons')
+        ->toContain('Practice file downloads')
         ->toContain(route('pricing'));
+});
+
+test('reminder subject uses the singular for one day left', function () {
+    $subscription = Subscription::factory()->for(Plan::factory()->create(['name' => 'Standard Monthly']))->create();
+
+    $mail = (new SubscriptionReminder($subscription, 1))->toMail($subscription->user);
+
+    expect($mail->subject)->toBe('Your Standard Monthly subscription ends in 1 day');
 });

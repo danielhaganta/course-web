@@ -22,7 +22,7 @@ class EnforceDeviceLimit
         if ($evictedCount > 0) {
             Inertia::flash('toast', [
                 'type' => 'info',
-                'message' => 'Kamu login di perangkat baru. Perangkat lama yang tidak aktif sudah dikeluarkan.',
+                'message' => 'You signed in on a new device. Your older inactive device has been signed out.',
             ]);
         }
     }

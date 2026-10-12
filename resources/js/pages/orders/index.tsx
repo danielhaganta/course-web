@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCheckout } from '@/hooks/use-checkout';
 import { formatRupiah } from '@/lib/currency';
+import { formatDateTime } from '@/lib/date';
 import { finish } from '@/routes/checkout';
 import { index as ordersIndex } from '@/routes/orders';
 import type { OrderHistoryItem, OrderStatus, SnapConfig } from '@/types';
@@ -27,15 +28,15 @@ const STATUS_BADGE: Record<
 export default function OrdersIndex({ orders, snap }: Props) {
     return (
         <>
-            <Head title="Riwayat pembayaran" />
+            <Head title="Payment history" />
             <div className="flex flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
                 <h1 className="font-display text-[clamp(40px,5vw,56px)] leading-[0.92] font-extrabold uppercase">
-                    Riwayat pembayaran
+                    Payment history
                 </h1>
 
                 {orders.length === 0 ? (
                     <p className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
-                        Belum ada pembayaran.
+                        No payments yet.
                     </p>
                 ) : (
                     <ul className="divide-y rounded-md border bg-card">
@@ -101,8 +102,8 @@ function OrderRow({
                         onClick={() => continuePayment({ ...payment, ...snap })}
                     >
                         {isPreparing
-                            ? 'Membuka pembayaran...'
-                            : 'Lanjutkan pembayaran'}
+                            ? 'Opening payment...'
+                            : 'Continue payment'}
                     </Button>
                     {error && (
                         <p role="alert" className="text-xs text-destructive">
@@ -115,18 +116,10 @@ function OrderRow({
     );
 }
 
-function formatDateTime(isoDate: string): string {
-    return new Date(isoDate).toLocaleString('id-ID', {
-        dateStyle: 'medium',
-        timeStyle: 'short',
-        timeZone: 'Asia/Jakarta',
-    });
-}
-
 OrdersIndex.layout = {
     breadcrumbs: [
         {
-            title: 'Riwayat pembayaran',
+            title: 'Payment history',
             href: ordersIndex(),
         },
     ],

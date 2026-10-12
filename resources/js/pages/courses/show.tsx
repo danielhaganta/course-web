@@ -32,13 +32,13 @@ export default function CourseShow({ course }: Props) {
             </Head>
 
             <nav
-                aria-label="Lokasi halaman"
+                aria-label="Breadcrumb"
                 className="mb-7 text-sm text-muted-foreground"
             >
                 <ol className="flex flex-wrap gap-1.5">
                     <li>
                         <Link href={home()} className="hover:text-foreground">
-                            Beranda
+                            Home
                         </Link>{' '}
                         /
                     </li>
@@ -47,7 +47,7 @@ export default function CourseShow({ course }: Props) {
                             href={coursesIndex()}
                             className="hover:text-foreground"
                         >
-                            Course
+                            Courses
                         </Link>{' '}
                         /
                     </li>
@@ -68,10 +68,10 @@ export default function CourseShow({ course }: Props) {
                         </p>
                     )}
                     <dl className="mt-9 flex flex-wrap gap-9">
-                        <Stat label="Bagian" value={course.sections.length} />
-                        <Stat label="Materi" value={lessons.length} />
+                        <Stat label="Sections" value={course.sections.length} />
+                        <Stat label="Lessons" value={lessons.length} />
                         <Stat
-                            label="Total durasi"
+                            label="Total duration"
                             value={formatDuration(totalDuration(lessons))}
                         />
                     </dl>
@@ -88,10 +88,11 @@ export default function CourseShow({ course }: Props) {
                     id="curriculum-title"
                     className="font-display text-[56px] leading-none font-extrabold uppercase"
                 >
-                    Kurikulum
+                    Curriculum
                 </h2>
                 <p className="mt-2 mb-7 text-muted-foreground">
-                    Materi bertanda Preview bisa ditonton tanpa langganan.
+                    Lessons marked Preview can be watched without a
+                    subscription.
                 </p>
                 <div className="overflow-hidden rounded-md border">
                     {course.sections.map((section, index) => (
@@ -115,7 +116,7 @@ export default function CourseShow({ course }: Props) {
                         id="description-title"
                         className="font-display text-4xl font-extrabold uppercase"
                     >
-                        Tentang course ini
+                        About this course
                     </h2>
                     <div
                         className="mt-5 space-y-4 leading-[1.7] text-foreground-soft [&_a]:underline [&_h2]:font-semibold [&_h2]:text-foreground [&_h3]:font-semibold [&_h3]:text-foreground [&_ol]:list-decimal [&_ol]:pl-5 [&_ul]:list-disc [&_ul]:pl-5"
@@ -158,14 +159,18 @@ function CourseActionsCard({ course }: { course: CourseDetail }) {
                                 lesson: course.resume_lesson_id,
                             })}
                         >
-                            {hasStarted ? 'Lanjutkan belajar' : 'Mulai belajar'}
+                            {hasStarted
+                                ? 'Continue learning'
+                                : 'Start learning'}
                         </Link>
                     </Button>
                 ) : (
                     !course.can_access && (
                         <>
                             <Button asChild size="lg" className="w-full">
-                                <Link href={pricing()}>Gabung membership</Link>
+                                <Link href={pricing()}>
+                                    Join the membership
+                                </Link>
                             </Button>
                             {course.price !== null && (
                                 <BuyCourseButton
@@ -179,10 +184,10 @@ function CourseActionsCard({ course }: { course: CourseDetail }) {
 
                 <ul className="space-y-3 pt-3 text-sm text-foreground-soft">
                     {course.price !== null && (
-                        <li>Akses selamanya jika dibeli satuan</li>
+                        <li>Lifetime access when bought on its own</li>
                     )}
-                    <li>File latihan untuk member Premium</li>
-                    <li>Progres belajar tersimpan otomatis</li>
+                    <li>Practice files for Premium members</li>
+                    <li>Learning progress saved automatically</li>
                 </ul>
             </div>
         </aside>
@@ -218,7 +223,7 @@ function CourseMedia({
     return (
         <Link
             href={showLesson({ course: course.slug, lesson: previewLessonId })}
-            aria-label="Tonton materi preview"
+            aria-label="Watch the preview lesson"
             className="group relative block aspect-video outline-none focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring"
         >
             {image}
@@ -232,7 +237,7 @@ function CourseMedia({
 function BuyCourseButton({ slug, price }: { slug: string; price: number }) {
     const { auth } = usePage().props;
     const { startCheckout, isPreparing, error } = useCheckout();
-    const label = `Beli course ini · ${formatRupiah(price)}`;
+    const label = `Buy this course · ${formatRupiah(price)}`;
 
     if (!auth.user) {
         return (
@@ -253,7 +258,7 @@ function BuyCourseButton({ slug, price }: { slug: string; price: number }) {
                     startCheckout(CheckoutController.course.url(slug))
                 }
             >
-                {isPreparing ? 'Menyiapkan pembayaran...' : label}
+                {isPreparing ? 'Preparing payment...' : label}
             </Button>
             {error && (
                 <p role="alert" className="text-sm text-destructive">

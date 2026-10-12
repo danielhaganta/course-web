@@ -42,13 +42,13 @@ export default function WatchLayout({ children }: { children: ReactNode }) {
                     {auth.user && (
                         <div className="flex items-center gap-3.5 text-sm text-muted-foreground">
                             <span>
-                                {completedLessonIds.length} dari {totalLessons}{' '}
-                                materi selesai
+                                {completedLessonIds.length} of {totalLessons}{' '}
+                                lessons completed
                             </span>
                             <ProgressBar
                                 value={completedLessonIds.length}
                                 max={totalLessons}
-                                label="Progres course"
+                                label="Course progress"
                                 className="w-36"
                             />
                         </div>

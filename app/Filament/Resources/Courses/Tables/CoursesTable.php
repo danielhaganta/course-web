@@ -23,16 +23,16 @@ class CoursesTable
                     ->label('Thumbnail')
                     ->disk('public'),
                 TextColumn::make('title')
-                    ->label('Judul')
+                    ->label('Title')
                     ->searchable(),
                 TextColumn::make('sections_count')
-                    ->label('Bagian')
+                    ->label('Sections')
                     ->counts('sections'),
                 IconColumn::make('is_published')
                     ->label('Published')
                     ->boolean(),
                 TextColumn::make('created_at')
-                    ->label('Dibuat')
+                    ->label('Created')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
             ])

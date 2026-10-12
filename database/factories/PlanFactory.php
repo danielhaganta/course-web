@@ -19,7 +19,7 @@ class PlanFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Standard Bulanan',
+            'name' => 'Standard Monthly',
             'slug' => fn (array $attributes) => Str::slug($attributes['name']).'-'.Str::lower(Str::random(6)),
             'description' => null,
             'price' => 149_000,
@@ -34,7 +34,7 @@ class PlanFactory extends Factory
     public function premium(): static
     {
         return $this->state(fn (array $attributes) => [
-            'name' => 'Premium Bulanan',
+            'name' => 'Premium Monthly',
             'price' => 249_000,
             'can_access_exclusive' => true,
             'can_download' => true,

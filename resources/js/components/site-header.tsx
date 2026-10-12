@@ -32,11 +32,11 @@ type MenuItem = {
 };
 
 const MENU: MenuItem[] = [
-    { label: 'Beranda', href: home() },
+    { label: 'Home', href: home() },
     { label: 'Before / After', href: beforeAfter() },
     { label: 'Course', href: coursesIndex(), matchChildren: true },
-    { label: 'Pengajar', href: instructor() },
-    { label: 'Paket', href: pricing() },
+    { label: 'Instructor', href: instructor() },
+    { label: 'Pricing', href: pricing() },
 ];
 
 export default function SiteHeader() {
@@ -47,7 +47,7 @@ export default function SiteHeader() {
         <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-8 bg-gradient-to-b from-background/85 to-transparent px-6 py-4 lg:px-10">
             <Wordmark />
 
-            <nav aria-label="Menu utama" className="hidden lg:block">
+            <nav aria-label="Main menu" className="hidden lg:block">
                 <MenuLinks className="flex gap-7" />
             </nav>
 
@@ -61,7 +61,7 @@ export default function SiteHeader() {
                         variant="ghost"
                         size="icon"
                         className="lg:hidden"
-                        aria-label="Buka menu"
+                        aria-label="Open menu"
                     >
                         <Menu className="size-6" />
                     </Button>
@@ -72,9 +72,9 @@ export default function SiteHeader() {
                 >
                     <SheetTitle className="sr-only">Menu</SheetTitle>
                     <SheetDescription className="sr-only">
-                        Navigasi utama Poeima Academy
+                        Poeima Academy main navigation
                     </SheetDescription>
-                    <nav aria-label="Menu utama">
+                    <nav aria-label="Main menu">
                         <MenuLinks
                             className="flex flex-col"
                             itemClassName="py-3 font-display text-4xl font-extrabold tracking-normal"
@@ -158,11 +158,11 @@ function AccountActions({ onNavigate }: { onNavigate?: () => void }) {
                     onClick={onNavigate}
                     className="text-sm text-muted-foreground transition-colors hover:text-foreground"
                 >
-                    Masuk
+                    Log in
                 </Link>
                 <Button asChild>
                     <Link href={register()} onClick={onNavigate}>
-                        Gabung
+                        Join
                     </Link>
                 </Button>
             </>

@@ -9,6 +9,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Illuminate\Support\Str;
 
 /**
  * Pengingat 7 dan 1 hari sebelum berakhir, serta pemberitahuan di hari langganan berakhir ($daysLeft = 0).
@@ -36,32 +37,32 @@ class SubscriptionReminder extends Notification implements ShouldQueue
         $endsAt = $this->formatDate($this->subscription->ends_at);
 
         $mail = (new MailMessage)
-            ->greeting("Halo {$notifiable->name},");
+            ->greeting("Hi {$notifiable->name},");
 
         $mail = $this->daysLeft === 0
-            ? $mail->subject("Langganan {$plan->name} kamu berakhir hari ini")
-                ->line("Langganan **{$plan->name}** kamu berakhir hari ini, **{$endsAt}**.")
-            : $mail->subject("Langganan {$plan->name} kamu berakhir dalam {$this->daysLeft} hari")
-                ->line("Langganan **{$plan->name}** kamu akan berakhir pada **{$endsAt}**.");
+            ? $mail->subject("Your {$plan->name} subscription ends today")
+                ->line("Your **{$plan->name}** subscription ends today, **{$endsAt}**.")
+            : $mail->subject("Your {$plan->name} subscription ends in {$this->daysLeft} ".Str::plural('day', $this->daysLeft))
+                ->line("Your **{$plan->name}** subscription ends on **{$endsAt}**.");
 
-        $mail->line('Kalau tidak diperpanjang, kamu akan kehilangan:')
-            ->line('• Akses ke semua course');
+        $mail->line('If you don\'t renew, you will lose:')
+            ->line('• Access to all courses');
 
         if ($plan->can_access_exclusive) {
-            $mail->line('• Materi exclusive khusus Premium');
+            $mail->line('• Premium-only exclusive lessons');
         }
 
         if ($plan->can_download) {
-            $mail->line('• Download file latihan');
+            $mail->line('• Practice file downloads');
         }
 
         return $mail
-            ->line('Course yang kamu beli satuan tetap bisa diakses.')
-            ->action('Perpanjang langganan', route('pricing'));
+            ->line('Courses you bought individually stay available.')
+            ->action('Renew subscription', route('pricing'));
     }
 
     private function formatDate(CarbonInterface $date): string
     {
-        return $date->setTimezone('Asia/Jakarta')->locale('id')->translatedFormat('j F Y, H.i').' WIB';
+        return $date->setTimezone('Asia/Jakarta')->format('j M Y, H:i').' WIB';
     }
 }

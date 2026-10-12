@@ -22,7 +22,7 @@ class OrdersTable
             ->defaultSort('created_at', 'desc')
             ->columns([
                 TextColumn::make('code')
-                    ->label('Kode')
+                    ->label('Code')
                     ->searchable()
                     ->copyable(),
                 TextColumn::make('user.email')
@@ -32,24 +32,24 @@ class OrdersTable
                 TextColumn::make('item')
                     ->label('Item')
                     ->state(fn (Order $record): string => $record->itemName())
-                    ->description(fn (Order $record): string => $record->purchasable_type === 'plan' ? 'Paket' : 'Course'),
+                    ->description(fn (Order $record): string => $record->purchasable_type === 'plan' ? 'Plan' : 'Course'),
                 TextColumn::make('amount')
-                    ->label('Nominal')
+                    ->label('Amount')
                     ->money('IDR', locale: 'id', decimalPlaces: 0),
                 TextColumn::make('payment_method')
-                    ->label('Metode')
+                    ->label('Method')
                     ->state(fn (Order $record): ?string => app(Midtrans::class)->paymentMethodLabel($record))
                     ->placeholder('-'),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge(),
                 TextColumn::make('paid_at')
-                    ->label('Dibayar')
+                    ->label('Paid')
                     ->dateTime('d M Y H:i')
                     ->sortable()
                     ->placeholder('-'),
                 TextColumn::make('created_at')
-                    ->label('Dibuat')
+                    ->label('Created')
                     ->dateTime('d M Y H:i')
                     ->sortable(),
             ])
@@ -58,13 +58,13 @@ class OrdersTable
                     ->label('Status')
                     ->options(OrderStatus::class),
                 SelectFilter::make('purchasable_type')
-                    ->label('Jenis item')
-                    ->options(['plan' => 'Paket', 'course' => 'Course']),
+                    ->label('Item type')
+                    ->options(['plan' => 'Plan', 'course' => 'Course']),
                 Filter::make('created_at')
-                    ->label('Tanggal order')
+                    ->label('Order date')
                     ->schema([
-                        DatePicker::make('from')->label('Dari tanggal'),
-                        DatePicker::make('until')->label('Sampai tanggal'),
+                        DatePicker::make('from')->label('From'),
+                        DatePicker::make('until')->label('Until'),
                     ])
                     // Tanggal dipilih dalam WIB, kolom disimpan dalam UTC
                     ->query(fn (Builder $query, array $data): Builder => $query

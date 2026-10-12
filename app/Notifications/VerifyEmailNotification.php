@@ -18,9 +18,9 @@ class VerifyEmailNotification extends VerifyEmail implements ShouldQueue
     protected function buildMailMessage($url): MailMessage
     {
         return (new MailMessage)
-            ->subject('Verifikasi email akun Poeima Academy')
-            ->line('Terima kasih sudah mendaftar di Poeima Academy. Klik tombol di bawah untuk memverifikasi alamat email kamu.')
-            ->action('Verifikasi email', $url)
-            ->line('Link ini berlaku '.Config::integer('auth.verification.expire', 60).' menit. Kalau kamu tidak merasa mendaftar, abaikan email ini.');
+            ->subject('Verify your Poeima Academy email')
+            ->line('Thanks for signing up for Poeima Academy. Click the button below to verify your email address.')
+            ->action('Verify email', $url)
+            ->line('This link expires in '.Config::integer('auth.verification.expire', 60).' minutes. If you didn\'t sign up, you can ignore this email.');
     }
 }

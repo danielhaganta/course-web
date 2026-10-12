@@ -12,17 +12,17 @@ import type { NavItem } from '@/types';
 
 const sidebarNavItems: NavItem[] = [
     {
-        title: 'Profil',
+        title: 'Profile',
         href: edit(),
         icon: null,
     },
     {
-        title: 'Keamanan',
+        title: 'Security',
         href: editSecurity(),
         icon: null,
     },
     {
-        title: 'Perangkat aktif',
+        title: 'Active devices',
         href: editDevices(),
         icon: null,
     },
@@ -34,15 +34,15 @@ export default function SettingsLayout({ children }: PropsWithChildren) {
     return (
         <div className="px-4 py-6">
             <Heading
-                title="Pengaturan"
-                description="Profil, password, dan perangkat yang terhubung ke akunmu"
+                title="Settings"
+                description="Your profile, password, and the devices signed in to your account"
             />
 
             <div className="flex flex-col lg:flex-row lg:space-x-12">
                 <aside className="w-full max-w-xl lg:w-48">
                     <nav
                         className="flex flex-col space-y-1 space-x-0"
-                        aria-label="Pengaturan"
+                        aria-label="Settings"
                     >
                         {sidebarNavItems.map((item, index) => (
                             <Button

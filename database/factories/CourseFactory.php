@@ -20,12 +20,12 @@ class CourseFactory extends Factory
     {
         return [
             'title' => fake()->randomElement([
-                'Color Grading Sinematik untuk Pemula',
-                'Teknik Editing Video untuk Kreator Konten',
-                'Menguasai DaVinci Resolve dari Nol',
-                'Storytelling Lewat Editing',
-                'Motion Graphics Dasar',
-                'Audio Mixing untuk Video',
+                'Cinematic Color Grading for Beginners',
+                'Video Editing Techniques for Content Creators',
+                'DaVinci Resolve from Scratch',
+                'Storytelling Through Editing',
+                'Motion Graphics Basics',
+                'Audio Mixing for Video',
             ]),
             // Suffix acak supaya slug tetap unik walau judul sama
             'slug' => fn (array $attributes) => Str::slug($attributes['title']).'-'.Str::lower(Str::random(6)),
