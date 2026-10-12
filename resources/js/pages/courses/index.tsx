@@ -17,7 +17,13 @@ type Props = {
 export default function CoursesIndex({ courses }: Props) {
     return (
         <>
-            <Head title="Courses" />
+            <Head title="Courses">
+                <meta
+                    head-key="description"
+                    name="description"
+                    content="Daftar course color grading di Poeima Academy. Pilih course untuk melihat kurikulum dan materi preview gratis."
+                />
+            </Head>
             <div className="space-y-8">
                 <div className="space-y-2">
                     <h1 className="text-3xl font-semibold tracking-tight">

@@ -2,6 +2,10 @@
 
 @import 'tw-animate-css';
 
+/* Font self-host, tanpa Google Fonts */
+@import '@fontsource-variable/manrope';
+@import '@fontsource-variable/big-shoulders-display';
+
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
@@ -9,9 +13,11 @@
 
 @theme {
     --font-sans:
-        'Instrument Sans', ui-sans-serif, system-ui, sans-serif,
+        'Manrope Variable', ui-sans-serif, system-ui, sans-serif,
         'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol',
         'Noto Color Emoji';
+    /* Judul: tebal, kapital, rapat */
+    --font-display: 'Big Shoulders Display Variable', ui-sans-serif, sans-serif;
 
     --radius-lg: var(--radius);
     --radius-md: calc(var(--radius) - 2px);
@@ -19,6 +25,8 @@
 
     --color-background: var(--background);
     --color-foreground: var(--foreground);
+    /* Teks sekunder, di antara foreground dan muted-foreground */
+    --color-foreground-soft: var(--foreground-soft);
 
     --color-card: var(--card);
     --color-card-foreground: var(--card-foreground);
@@ -59,77 +67,71 @@
     --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
     --color-sidebar-border: var(--sidebar-border);
     --color-sidebar-ring: var(--sidebar-ring);
+
+    --animate-page-enter: page-enter 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    --animate-marquee: marquee 40s linear infinite;
+
+    @keyframes page-enter {
+        from {
+            opacity: 0;
+            transform: scale(1.03);
+        }
+        to {
+            opacity: 1;
+            transform: none;
+        }
+    }
+
+    /* Isi pita diulang dua kali, jadi geser setengah lebar untuk loop mulus */
+    @keyframes marquee {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
 }
 
 :root {
-    --background: oklch(1 0 0);
-    --foreground: oklch(0.145 0 0);
-    --card: oklch(1 0 0);
-    --card-foreground: oklch(0.145 0 0);
-    --popover: oklch(1 0 0);
-    --popover-foreground: oklch(0.145 0 0);
-    --primary: oklch(0.205 0 0);
-    --primary-foreground: oklch(0.985 0 0);
-    --secondary: oklch(0.97 0 0);
-    --secondary-foreground: oklch(0.205 0 0);
-    --muted: oklch(0.97 0 0);
-    --muted-foreground: oklch(0.556 0 0);
-    --accent: oklch(0.97 0 0);
-    --accent-foreground: oklch(0.205 0 0);
-    --destructive: oklch(0.577 0.245 27.325);
-    --destructive-foreground: oklch(0.577 0.245 27.325);
-    --border: oklch(0.922 0 0);
-    --input: oklch(0.922 0 0);
-    --ring: oklch(0.87 0 0);
-    --chart-1: oklch(0.646 0.222 41.116);
-    --chart-2: oklch(0.6 0.118 184.704);
-    --chart-3: oklch(0.398 0.07 227.392);
-    --chart-4: oklch(0.828 0.189 84.429);
-    --chart-5: oklch(0.769 0.188 70.08);
-    --radius: 0.625rem;
-    --sidebar: oklch(0.985 0 0);
-    --sidebar-foreground: oklch(0.145 0 0);
-    --sidebar-primary: oklch(0.205 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.97 0 0);
-    --sidebar-accent-foreground: oklch(0.205 0 0);
-    --sidebar-border: oklch(0.922 0 0);
-    --sidebar-ring: oklch(0.87 0 0);
-}
+    /* Website selalu gelap. Palet monokrom, tanpa warna aksen. */
+    color-scheme: dark;
 
-.dark {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --card: oklch(0.145 0 0);
-    --card-foreground: oklch(0.985 0 0);
-    --popover: oklch(0.145 0 0);
-    --popover-foreground: oklch(0.985 0 0);
-    --primary: oklch(0.985 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --secondary: oklch(0.269 0 0);
-    --secondary-foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --accent: oklch(0.269 0 0);
-    --accent-foreground: oklch(0.985 0 0);
-    --destructive: oklch(0.396 0.141 25.723);
-    --destructive-foreground: oklch(0.637 0.237 25.331);
-    --border: oklch(0.269 0 0);
-    --input: oklch(0.269 0 0);
-    --ring: oklch(0.439 0 0);
-    --chart-1: oklch(0.488 0.243 264.376);
-    --chart-2: oklch(0.696 0.17 162.48);
-    --chart-3: oklch(0.769 0.188 70.08);
-    --chart-4: oklch(0.627 0.265 303.9);
-    --chart-5: oklch(0.645 0.246 16.439);
-    --sidebar: oklch(0.205 0 0);
-    --sidebar-foreground: oklch(0.985 0 0);
-    --sidebar-primary: oklch(0.985 0 0);
-    --sidebar-primary-foreground: oklch(0.985 0 0);
-    --sidebar-accent: oklch(0.269 0 0);
-    --sidebar-accent-foreground: oklch(0.985 0 0);
-    --sidebar-border: oklch(0.269 0 0);
-    --sidebar-ring: oklch(0.439 0 0);
+    --background: #0c0d0e;
+    --foreground: #f2f2f2;
+    --foreground-soft: #d4d4d4;
+    --card: #121315;
+    --card-foreground: #f2f2f2;
+    --popover: #18191c;
+    --popover-foreground: #f2f2f2;
+    --primary: #f2f2f2;
+    --primary-foreground: #0c0c0c;
+    --secondary: #18191c;
+    --secondary-foreground: #f2f2f2;
+    --muted: #18191c;
+    --muted-foreground: #a3a3a3;
+    --accent: #18191c;
+    --accent-foreground: #f2f2f2;
+    /* Merah redup hanya untuk error dan aksi berbahaya */
+    --destructive: #b4554f;
+    --destructive-foreground: #e3a39e;
+    --border: #2a2b2f;
+    --input: #2a2b2f;
+    --ring: #f2f2f2;
+    --chart-1: #f2f2f2;
+    --chart-2: #d4d4d4;
+    --chart-3: #a3a3a3;
+    --chart-4: #6b6c70;
+    --chart-5: #3a3b3f;
+    --radius: 0.375rem;
+    --sidebar: #121315;
+    --sidebar-foreground: #f2f2f2;
+    --sidebar-primary: #f2f2f2;
+    --sidebar-primary-foreground: #0c0c0c;
+    --sidebar-accent: #18191c;
+    --sidebar-accent-foreground: #f2f2f2;
+    --sidebar-border: #2a2b2f;
+    --sidebar-ring: #f2f2f2;
 }
 
 @layer base {
@@ -139,5 +141,17 @@
 
     body {
         @apply bg-background text-foreground;
+    }
+}
+
+/* Semua animasi dan transisi dimatikan untuk pengguna yang memilih kurangi gerakan */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
     }
 }

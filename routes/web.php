@@ -10,7 +10,14 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PricingController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'welcome')->name('home');
+Route::inertia('/', 'home')->name('home');
+Route::inertia('before-after', 'before-after')->name('before-after');
+Route::inertia('pengajar', 'instructor')->name('instructor');
+
+// Isi menyusul, sementara halaman kosong
+Route::inertia('syarat-ketentuan', 'info', ['title' => 'Syarat & ketentuan'])->name('terms');
+Route::inertia('kebijakan-privasi', 'info', ['title' => 'Kebijakan privasi'])->name('privacy');
+Route::inertia('kontak', 'info', ['title' => 'Kontak'])->name('contact');
 
 Route::get('pricing', [PricingController::class, 'index'])->name('pricing');
 

@@ -1,62 +1,35 @@
-import { Link, usePage } from '@inertiajs/react';
-import { Button } from '@/components/ui/button';
-import { dashboard, home, login, register } from '@/routes';
-import { index as coursesIndex } from '@/routes/courses';
-import { dashboard as adminDashboard } from '@/routes/filament/admin/pages';
+import { usePage } from '@inertiajs/react';
+import type { ReactNode } from 'react';
+import SiteFooter from '@/components/site-footer';
+import SiteHeader from '@/components/site-header';
+import { cn } from '@/lib/utils';
 
-export default function PublicLayout({
-    children,
-}: {
-    children: React.ReactNode;
-}) {
-    const { auth, name } = usePage().props;
+// Halaman satu layar penuh di desktop, header melayang di atas gambar
+const FULLSCREEN_PAGES = ['home', 'before-after', 'instructor'];
+
+/**
+ * Layout persisten: header tidak dimuat ulang saat pindah halaman,
+ * hanya isi halaman yang masuk dengan fade dan sedikit zoom.
+ */
+export default function PublicLayout({ children }: { children: ReactNode }) {
+    const { component, url } = usePage();
+    const isFullscreen = FULLSCREEN_PAGES.includes(component);
 
     return (
-        <div className="min-h-screen bg-background text-foreground">
-            <header className="border-b">
-                <div className="mx-auto flex h-16 max-w-6xl items-center gap-6 px-4">
-                    <Link href={home()} className="font-semibold">
-                        {name}
-                    </Link>
-                    <nav className="flex flex-1 items-center text-sm">
-                        <Link
-                            href={coursesIndex()}
-                            className="text-muted-foreground hover:text-foreground"
-                        >
-                            Courses
-                        </Link>
-                    </nav>
-                    <div className="flex items-center gap-2">
-                        {auth.user ? (
-                            <>
-                                {auth.user.is_admin && (
-                                    <Button asChild variant="ghost" size="sm">
-                                        {/* Panel Filament bukan halaman Inertia */}
-                                        <a href={adminDashboard.url()}>
-                                            Admin panel
-                                        </a>
-                                    </Button>
-                                )}
-                                <Button asChild size="sm">
-                                    <Link href={dashboard()}>Dashboard</Link>
-                                </Button>
-                            </>
-                        ) : (
-                            <>
-                                <Button asChild variant="ghost" size="sm">
-                                    <Link href={login()}>Login</Link>
-                                </Button>
-                                <Button asChild size="sm">
-                                    <Link href={register()}>Register</Link>
-                                </Button>
-                            </>
-                        )}
-                    </div>
-                </div>
-            </header>
-            <main className="mx-auto max-w-6xl px-4 py-8 md:py-12">
+        <div className="relative flex min-h-dvh flex-col overflow-x-clip bg-background text-foreground">
+            <SiteHeader />
+            <main
+                key={url}
+                className={cn(
+                    'flex-1 motion-safe:animate-page-enter',
+                    !isFullscreen &&
+                        'mx-auto w-full max-w-6xl px-4 pt-28 pb-12 md:pt-32 md:pb-16',
+                )}
+            >
                 {children}
             </main>
+            {/* Di desktop halaman layar penuh tidak di-scroll, footer cukup di halaman lain */}
+            <SiteFooter className={cn(isFullscreen && 'lg:hidden')} />
         </div>
     );
 }
