@@ -28,15 +28,17 @@ export default function OrdersIndex({ orders, snap }: Props) {
     return (
         <>
             <Head title="Riwayat pembayaran" />
-            <div className="flex flex-1 flex-col gap-4 p-4">
-                <h1 className="text-xl font-semibold">Riwayat pembayaran</h1>
+            <div className="flex flex-1 flex-col gap-6 p-4 sm:p-6 lg:p-8">
+                <h1 className="font-display text-[clamp(40px,5vw,56px)] leading-[0.92] font-extrabold uppercase">
+                    Riwayat pembayaran
+                </h1>
 
                 {orders.length === 0 ? (
-                    <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">
+                    <p className="rounded-md border border-dashed p-6 text-center text-sm text-muted-foreground">
                         Belum ada pembayaran.
                     </p>
                 ) : (
-                    <ul className="divide-y rounded-lg border">
+                    <ul className="divide-y rounded-md border bg-card">
                         {orders.map((order) => (
                             <OrderRow
                                 key={order.code}

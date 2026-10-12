@@ -1,5 +1,4 @@
 import { Link } from '@inertiajs/react';
-import AppLogoIcon from '@/components/app-logo-icon';
 import { home } from '@/routes';
 import type { AuthLayoutProps } from '@/types';
 
@@ -9,30 +8,32 @@ export default function AuthSimpleLayout({
     description,
 }: AuthLayoutProps) {
     return (
-        <div className="flex min-h-svh flex-col items-center justify-center gap-6 bg-background p-6 md:p-10">
-            <div className="w-full max-w-sm">
-                <div className="flex flex-col gap-8">
-                    <div className="flex flex-col items-center gap-4">
-                        <Link
-                            href={home()}
-                            className="flex flex-col items-center gap-2 font-medium"
-                        >
-                            <div className="mb-1 flex h-9 w-9 items-center justify-center rounded-md">
-                                <AppLogoIcon className="size-9 fill-current text-[var(--foreground)] dark:text-white" />
-                            </div>
-                            <span className="sr-only">{title}</span>
-                        </Link>
+        <div className="flex min-h-svh flex-col items-center justify-center bg-background px-4 py-10">
+            <Link
+                href={home()}
+                className="flex items-baseline gap-2 rounded-[2px] outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
+            >
+                <span className="font-display text-3xl font-black tracking-[0.08em]">
+                    POEIMA
+                </span>
+                <span className="text-xs tracking-[0.14em] text-muted-foreground uppercase">
+                    Academy
+                </span>
+            </Link>
 
-                        <div className="space-y-2 text-center">
-                            <h1 className="text-xl font-medium">{title}</h1>
-                            <p className="text-center text-sm text-muted-foreground">
-                                {description}
-                            </p>
-                        </div>
-                    </div>
-                    {children}
+            <main className="mt-8 w-full max-w-md rounded-md border bg-card p-6 sm:p-8">
+                <div className="mb-7 space-y-2">
+                    <h1 className="font-display text-4xl leading-none font-extrabold uppercase">
+                        {title}
+                    </h1>
+                    {description && (
+                        <p className="text-sm leading-relaxed text-muted-foreground">
+                            {description}
+                        </p>
+                    )}
                 </div>
-            </div>
+                {children}
+            </main>
         </div>
     );
 }

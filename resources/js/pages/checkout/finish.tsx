@@ -21,20 +21,20 @@ const STATUS_DISPLAY: Record<
         title: 'Pembayaran berhasil',
         description: 'Akses kamu sudah aktif.',
         icon: CircleCheck,
-        tone: 'text-green-600 dark:text-green-500',
+        tone: 'text-foreground',
     },
     pending: {
         title: 'Menunggu pembayaran',
         description:
             'Selesaikan pembayaran sesuai instruksi. Akses aktif otomatis setelah pembayaran diterima.',
         icon: Clock,
-        tone: 'text-amber-600 dark:text-amber-500',
+        tone: 'text-foreground-soft',
     },
     failed: {
         title: 'Pembayaran gagal',
         description: 'Pembayaran tidak berhasil diproses. Silakan coba lagi.',
         icon: CircleX,
-        tone: 'text-destructive',
+        tone: 'text-destructive-foreground',
     },
     expired: {
         title: 'Pembayaran kedaluwarsa',
@@ -55,13 +55,15 @@ export default function CheckoutFinish({ order }: Props) {
             <div className="mx-auto flex w-full max-w-lg flex-col items-center gap-6 p-4 py-10 text-center">
                 <Icon className={cn('size-12', display.tone)} aria-hidden />
                 <div className="space-y-2">
-                    <h1 className="text-2xl font-semibold">{display.title}</h1>
+                    <h1 className="font-display text-5xl leading-[0.92] font-extrabold uppercase">
+                        {display.title}
+                    </h1>
                     <p className="text-muted-foreground">
                         {display.description}
                     </p>
                 </div>
 
-                <dl className="w-full divide-y rounded-lg border text-left text-sm">
+                <dl className="w-full divide-y rounded-md border bg-card text-left text-sm">
                     <OrderRow label="Pesanan" value={order.item.name} />
                     <OrderRow
                         label="Total"

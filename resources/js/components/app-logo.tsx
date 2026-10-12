@@ -1,21 +1,18 @@
-import { usePage } from '@inertiajs/react';
-import { useInitials } from '@/hooks/use-initials';
-
 export default function AppLogo() {
-    const { name } = usePage().props;
-    const getInitials = useInitials();
-
     return (
         <>
-            {/* Inisial tetap terlihat saat sidebar diciutkan */}
-            <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-xs font-semibold text-sidebar-primary-foreground">
-                {getInitials(name)}
-            </div>
-            <div className="ml-1 grid flex-1 text-left text-sm">
-                <span className="mb-0.5 truncate leading-tight font-semibold">
-                    {name}
+            {/* Saat sidebar diciutkan, cukup huruf P */}
+            <span className="hidden w-8 text-center font-display text-2xl font-black group-data-[collapsible=icon]:block">
+                P
+            </span>
+            <span className="flex items-baseline gap-2 group-data-[collapsible=icon]:hidden">
+                <span className="font-display text-2xl font-black tracking-[0.08em]">
+                    POEIMA
                 </span>
-            </div>
+                <span className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
+                    Academy
+                </span>
+            </span>
         </>
     );
 }

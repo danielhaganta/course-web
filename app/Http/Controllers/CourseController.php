@@ -4,21 +4,19 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\CourseSectionResource;
 use App\Models\Course;
-use App\Models\LessonProgress;
-use App\Models\User;
 use App\Services\AccessService;
+use App\Services\CourseProgress;
 use Filament\Forms\Components\RichEditor\RichContentRenderer;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class CourseController extends Controller
 {
-    public function index(Request $request, AccessService $access): Response
+    public function index(Request $request, AccessService $access, CourseProgress $progress): Response
     {
         $user = $request->user();
-        $completedCounts = $user ? $this->completedCountsByCourse($user) : collect();
+        $completedCounts = $user ? $progress->completedCountsByCourse($user) : collect();
 
         $courses = Course::query()
             ->where('is_published', true)
@@ -40,7 +38,7 @@ class CourseController extends Controller
         ]);
     }
 
-    public function show(Request $request, Course $course, AccessService $access): Response
+    public function show(Request $request, Course $course, AccessService $access, CourseProgress $progress): Response
     {
         abort_unless($course->is_published, 404);
 
@@ -60,43 +58,8 @@ class CourseController extends Controller
                 'sections' => $sections,
                 'can_access' => $canAccess,
                 'completed_lesson_ids' => $completedLessonIds,
-                'resume_lesson_id' => $canAccess ? $this->resumeLessonId($sections, $completedLessonIds) : null,
+                'resume_lesson_id' => $canAccess ? $progress->resumeLessonId($request->user(), $course, $completedLessonIds) : null,
             ],
         ]);
-    }
-
-    /**
-     * Materi pertama yang bisa ditonton dan belum selesai. Kalau semua sudah selesai, kembali ke materi pertama.
-     *
-     * @param  array<int, array{lessons: Collection<int, array{id: int, can_watch: bool}>}>  $sections
-     * @param  Collection<int, int>  $completedLessonIds
-     */
-    private function resumeLessonId(array $sections, Collection $completedLessonIds): ?int
-    {
-        $watchableIds = collect($sections)
-            ->flatMap(fn (array $section) => $section['lessons'])
-            ->where('can_watch', true)
-            ->pluck('id');
-
-        return $watchableIds->first(fn (int $id) => ! $completedLessonIds->contains($id))
-            ?? $watchableIds->first();
-    }
-
-    /**
-     * Jumlah materi selesai per course, satu query untuk seluruh katalog.
-     *
-     * @return Collection<int, int>
-     */
-    private function completedCountsByCourse(User $user): Collection
-    {
-        return LessonProgress::query()
-            ->completed()
-            ->where('lesson_progress.user_id', $user->id)
-            ->join('lessons', 'lessons.id', '=', 'lesson_progress.lesson_id')
-            ->join('sections', 'sections.id', '=', 'lessons.section_id')
-            ->groupBy('sections.course_id')
-            ->selectRaw('sections.course_id, count(*) as total')
-            ->pluck('total', 'sections.course_id')
-            ->map(fn (mixed $total): int => (int) $total);
     }
 }

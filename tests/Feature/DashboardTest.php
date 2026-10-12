@@ -1,7 +1,11 @@
 <?php
 
+use App\Models\Course;
 use App\Models\CoursePurchase;
+use App\Models\Lesson;
+use App\Models\LessonProgress;
 use App\Models\Plan;
+use App\Models\Section;
 use App\Models\Subscription;
 use App\Models\User;
 use Inertia\Testing\AssertableInertia as Assert;
@@ -40,4 +44,45 @@ test('dashboard shows no subscription when it has expired', function () {
     $this->actingAs($subscription->user)
         ->get(route('dashboard'))
         ->assertInertia(fn (Assert $page) => $page->where('subscription', null));
+});
+
+test('dashboard shows the last studied course with its next unfinished lesson', function () {
+    $subscription = Subscription::factory()->create();
+    $course = Course::factory()->published()->create();
+    $section = Section::factory()->for($course)->create();
+    $lessons = Lesson::factory()->for($section)->count(3)->sequence(fn ($sequence) => ['sort_order' => $sequence->index + 1])->create();
+    LessonProgress::factory()->for($subscription->user)->for($lessons[0])->create();
+
+    $this->actingAs($subscription->user)
+        ->get(route('dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('continueLearning.slug', $course->slug)
+            ->where('continueLearning.completed_lessons_count', 1)
+            ->where('continueLearning.lessons_count', 3)
+            ->where('continueLearning.next_lesson_id', $lessons[1]->id)
+            ->where('courses.0.slug', $course->slug)
+            ->where('courses.0.completed_lessons_count', 1));
+});
+
+test('dashboard lists only courses the member can access', function () {
+    $purchase = CoursePurchase::factory()->create();
+    Course::factory()->published()->create();
+
+    $this->actingAs($purchase->user)
+        ->get(route('dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->has('courses', 1)
+            ->where('courses.0.slug', $purchase->course->slug)
+            ->where('continueLearning', null));
+});
+
+test('dashboard shows the last ended subscription for renewal', function () {
+    $ended = Subscription::factory()->expired()->for(Plan::factory()->premium())->create();
+
+    $this->actingAs($ended->user)
+        ->get(route('dashboard'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('subscription', null)
+            ->where('endedSubscription.plan_name', 'Premium Bulanan')
+            ->has('courses', 0));
 });

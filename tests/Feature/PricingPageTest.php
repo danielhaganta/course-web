@@ -16,3 +16,10 @@ test('pricing page only shows active plans in sort order', function () {
             ->where('plans.0.id', $first->id)
             ->where('plans.1.id', $second->id));
 });
+
+test('pricing page sends the device limit for the comparison table', function () {
+    config(['auth.max_devices' => 3]);
+
+    $this->get(route('pricing'))
+        ->assertInertia(fn (Assert $page) => $page->where('maxDevices', 3));
+});

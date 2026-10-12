@@ -15,10 +15,19 @@ Route::inertia('/', 'home')->name('home');
 Route::inertia('before-after', 'before-after')->name('before-after');
 Route::inertia('pengajar', 'instructor')->name('instructor');
 
-// Isi menyusul, sementara halaman kosong
-Route::inertia('syarat-ketentuan', 'info', ['title' => 'Syarat & ketentuan'])->name('terms');
-Route::inertia('kebijakan-privasi', 'info', ['title' => 'Kebijakan privasi'])->name('privacy');
-Route::inertia('kontak', 'info', ['title' => 'Kontak'])->name('contact');
+// Isi placeholder, diganti teks dari pemilik website
+Route::inertia('syarat-ketentuan', 'info', [
+    'title' => 'Syarat & ketentuan',
+    'placeholder' => '[Isi syarat & ketentuan dari pemilik website: aturan penggunaan akun, langganan, pembelian course, pembatalan, dan pengembalian dana.]',
+])->name('terms');
+Route::inertia('kebijakan-privasi', 'info', [
+    'title' => 'Kebijakan privasi',
+    'placeholder' => '[Isi kebijakan privasi dari pemilik website: data apa yang dikumpulkan, untuk apa dipakai, dengan siapa dibagikan, dan cara menghapus akun.]',
+])->name('privacy');
+Route::inertia('kontak', 'info', [
+    'title' => 'Kontak',
+    'placeholder' => '[Isi kontak dari pemilik website: email, nomor WhatsApp, jam layanan, dan alamat bila ada.]',
+])->name('contact');
 
 Route::get('pricing', [PricingController::class, 'index'])->name('pricing');
 

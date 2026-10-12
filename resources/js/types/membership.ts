@@ -53,3 +53,16 @@ export type PurchasedCourse = {
     title: string;
     slug: string;
 };
+
+export type DashboardCourse = {
+    title: string;
+    slug: string;
+    thumbnail_url: string | null;
+    lessons_count: number;
+    completed_lessons_count: number;
+};
+
+export type ContinueLearning = DashboardCourse & {
+    // Materi pertama yang belum selesai
+    next_lesson_id: number | null;
+};
