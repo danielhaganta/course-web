@@ -5,6 +5,9 @@ namespace Database\Seeders;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Str;
+use RuntimeException;
 
 class DatabaseSeeder extends Seeder
 {
@@ -17,12 +20,27 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-            'is_admin' => true,
-        ]);
+        $this->createTestUser('admin', isAdmin: true);
+        // Member biasa sengaja tanpa subscription
+        $this->createTestUser('member', isAdmin: false);
 
         $this->call([PlanSeeder::class, CourseSeeder::class]);
+    }
+
+    private function createTestUser(string $role, bool $isAdmin): void
+    {
+        $account = Config::array("seeder.{$role}");
+
+        foreach ($account as $field => $value) {
+            if (blank($value)) {
+                throw new RuntimeException(Str::upper("{$role}_{$field}").' belum diisi di .env');
+            }
+        }
+
+        User::factory()->create([
+            ...$account,
+            'email_verified_at' => now(),
+            'is_admin' => $isAdmin,
+        ]);
     }
 }
