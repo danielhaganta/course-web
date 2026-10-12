@@ -7,6 +7,8 @@ use App\Models\Plan;
 use App\Models\Subscription;
 use App\Models\User;
 use BackedEnum;
+use Filament\Actions\Action;
+use Filament\Actions\DeleteAction;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Resources\Resource;
@@ -98,6 +100,20 @@ class SubscriptionResource extends Resource
                         'Belum mulai' => 'info',
                         default => 'gray',
                     }),
+            ])
+            ->recordActions([
+                Action::make('endNow')
+                    ->label('Akhiri sekarang')
+                    ->icon(Heroicon::OutlinedStopCircle)
+                    ->color('warning')
+                    ->requiresConfirmation()
+                    ->modalDescription('Akses member dari langganan ini langsung berhenti.')
+                    ->visible(fn (Subscription $record): bool => $record->ends_at->isFuture())
+                    ->action(fn (Subscription $record) => $record->update(['ends_at' => now()]))
+                    ->successNotificationTitle('Langganan sudah diakhiri'),
+                // Langganan dari order berbayar tetap disimpan sebagai riwayat, cukup diakhiri
+                DeleteAction::make()
+                    ->hidden(fn (Subscription $record): bool => $record->order_id !== null),
             ]);
     }
 

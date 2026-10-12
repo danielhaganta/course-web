@@ -114,6 +114,29 @@ class Midtrans
     }
 
     /**
+     * Nama metode pembayaran untuk ditampilkan, dari payment_type dan isi notifikasi terakhir.
+     */
+    public function paymentMethodLabel(Order $order): ?string
+    {
+        $payload = $order->gateway_payload ?? [];
+
+        return match ($order->payment_type) {
+            null => null,
+            'bank_transfer' => match (true) {
+                isset($payload['va_numbers'][0]['bank']) => Str::upper($payload['va_numbers'][0]['bank']).' Virtual Account',
+                isset($payload['permata_va_number']) => 'Permata Virtual Account',
+                default => 'Virtual Account',
+            },
+            'echannel' => 'Mandiri Bill',
+            'qris' => 'QRIS',
+            'gopay' => 'GoPay',
+            'shopeepay' => 'ShopeePay',
+            'credit_card' => 'Kartu kredit',
+            default => Str::headline($order->payment_type),
+        };
+    }
+
+    /**
      * @return array{snap_js_url: string, client_key: string}
      */
     public function frontendConfig(): array

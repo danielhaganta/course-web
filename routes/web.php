@@ -6,6 +6,7 @@ use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\MidtransWebhookController;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PricingController;
 use Illuminate\Support\Facades\Route;
 
@@ -23,6 +24,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('attachments/{attachment}/download', [AttachmentController::class, 'download'])
         ->name('attachments.download');
+
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
 
     Route::post('checkout/plans/{plan:slug}', [CheckoutController::class, 'plan'])->name('checkout.plan');
     Route::post('checkout/courses/{course:slug}', [CheckoutController::class, 'course'])->name('checkout.course');

@@ -35,6 +35,20 @@ export type FinishedOrder = {
     };
 };
 
+export type OrderHistoryItem = {
+    code: string;
+    item_name: string;
+    amount: number;
+    payment_method: string | null;
+    status: OrderStatus;
+    status_label: string;
+    created_at: string;
+    // Hanya untuk order pending yang belum kedaluwarsa
+    payment: Pick<CheckoutResponse, 'snap_token' | 'finish_url'> | null;
+};
+
+export type SnapConfig = Pick<CheckoutResponse, 'snap_js_url' | 'client_key'>;
+
 export type PurchasedCourse = {
     title: string;
     slug: string;

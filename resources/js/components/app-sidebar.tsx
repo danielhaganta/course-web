@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, LayoutGrid, ShieldCheck, Tag } from 'lucide-react';
+import { BookOpen, LayoutGrid, Receipt, ShieldCheck, Tag } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/sidebar';
 import { dashboard, pricing } from '@/routes';
 import { index as coursesIndex } from '@/routes/courses';
+import { index as ordersIndex } from '@/routes/orders';
 import { dashboard as adminDashboard } from '@/routes/filament/admin/pages';
 import type { NavItem } from '@/types';
 
@@ -33,6 +34,11 @@ const mainNavItems: NavItem[] = [
         title: 'Paket',
         href: pricing(),
         icon: Tag,
+    },
+    {
+        title: 'Riwayat pembayaran',
+        href: ordersIndex(),
+        icon: Receipt,
     },
 ];
 

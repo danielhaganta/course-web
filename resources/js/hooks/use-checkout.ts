@@ -46,18 +46,7 @@ export function useCheckout() {
                 return;
             }
 
-            const snap = await loadSnap(
-                response.snap_js_url,
-                response.client_key,
-            );
-            const goToFinish = () => router.visit(response.finish_url);
-
-            snap.pay(response.snap_token, {
-                onSuccess: goToFinish,
-                onPending: goToFinish,
-                onError: goToFinish,
-                onClose: goToFinish,
-            });
+            await openSnap(response);
         } catch (exception) {
             setError(errorMessage(exception));
         } finally {
@@ -65,7 +54,35 @@ export function useCheckout() {
         }
     }
 
-    return { startCheckout, isPreparing, error };
+    /**
+     * Buka ulang popup untuk order pending dengan snap token yang sudah ada.
+     */
+    async function continuePayment(payment: CheckoutResponse): Promise<void> {
+        setError(null);
+        setPreparing(true);
+
+        try {
+            await openSnap(payment);
+        } catch {
+            setError('Popup pembayaran gagal dibuka. Coba lagi beberapa saat.');
+        } finally {
+            setPreparing(false);
+        }
+    }
+
+    return { startCheckout, continuePayment, isPreparing, error };
+}
+
+async function openSnap(payment: CheckoutResponse): Promise<void> {
+    const snap = await loadSnap(payment.snap_js_url, payment.client_key);
+    const goToFinish = () => router.visit(payment.finish_url);
+
+    snap.pay(payment.snap_token, {
+        onSuccess: goToFinish,
+        onPending: goToFinish,
+        onError: goToFinish,
+        onClose: goToFinish,
+    });
 }
 
 function loadSnap(src: string, clientKey: string): Promise<Snap> {

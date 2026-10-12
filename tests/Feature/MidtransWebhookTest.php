@@ -69,6 +69,7 @@ test('settlement for a plan marks the order paid and creates a subscription', fu
         ->and($order->gateway_payload['transaction_id'])->toBe('trx-123')
         ->and($subscription->user_id)->toBe($order->user_id)
         ->and($subscription->plan_id)->toBe($plan->id)
+        ->and($subscription->order_id)->toBe($order->id)
         ->and($subscription->ends_at->equalTo(now()->addDays(30)))->toBeTrue();
 });
 

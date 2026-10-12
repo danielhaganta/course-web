@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use App\Enums\OrderStatus;
+use Carbon\CarbonInterface;
 use Database\Factories\OrderFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\RouteKey;
+use Illuminate\Database\Eloquent\Attributes\Scope;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -62,6 +65,24 @@ class Order extends Model
     public function isPayable(): bool
     {
         return $this->status === OrderStatus::Pending && $this->expires_at->isFuture();
+    }
+
+    public function itemName(): string
+    {
+        $item = $this->purchasable;
+
+        return $item instanceof Plan ? $item->name : $item->title;
+    }
+
+    /**
+     * Pemasukan dihitung dari order paid berdasarkan paid_at.
+     *
+     * @param  Builder<self>  $query
+     */
+    #[Scope]
+    protected function paidBetween(Builder $query, CarbonInterface $start, CarbonInterface $end): void
+    {
+        $query->where('status', OrderStatus::Paid)->whereBetween('paid_at', [$start, $end]);
     }
 
     /**

@@ -15,12 +15,13 @@ use Illuminate\Support\Carbon;
  * @property int $id
  * @property int $user_id
  * @property int $plan_id
+ * @property int|null $order_id
  * @property Carbon $starts_at
  * @property Carbon $ends_at
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  */
-#[Fillable(['user_id', 'plan_id', 'starts_at', 'ends_at'])]
+#[Fillable(['user_id', 'plan_id', 'order_id', 'starts_at', 'ends_at'])]
 class Subscription extends Model
 {
     /** @use HasFactory<SubscriptionFactory> */
@@ -32,6 +33,16 @@ class Subscription extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    /**
+     * Null kalau langganan dibuat manual oleh admin.
+     *
+     * @return BelongsTo<Order, $this>
+     */
+    public function order(): BelongsTo
+    {
+        return $this->belongsTo(Order::class);
     }
 
     /**
