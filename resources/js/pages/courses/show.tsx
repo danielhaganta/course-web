@@ -1,9 +1,11 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, usePage } from '@inertiajs/react';
+import CheckoutController from '@/actions/App/Http/Controllers/CheckoutController';
 import CourseSectionItem from '@/components/course-section-item';
 import { Button } from '@/components/ui/button';
+import { useCheckout } from '@/hooks/use-checkout';
 import { formatRupiah } from '@/lib/currency';
 import { formatDuration, totalDuration } from '@/lib/duration';
-import { pricing } from '@/routes';
+import { pricing, register } from '@/routes';
 import { show as showLesson } from '@/routes/lessons';
 import type { CourseDetail } from '@/types';
 
@@ -86,20 +88,51 @@ export default function CourseShow({ course }: Props) {
                                 </Link>
                             </Button>
                             {course.price !== null && (
-                                <Button
-                                    size="lg"
-                                    variant="outline"
-                                    className="w-full"
-                                    disabled
-                                >
-                                    Beli course ini ·{' '}
-                                    {formatRupiah(course.price)}
-                                </Button>
+                                <BuyCourseButton
+                                    slug={course.slug}
+                                    price={course.price}
+                                />
                             )}
                         </>
                     )}
                 </aside>
             </div>
         </>
+    );
+}
+
+// Hanya tampil kalau user belum punya akses ke course ini
+function BuyCourseButton({ slug, price }: { slug: string; price: number }) {
+    const { auth } = usePage().props;
+    const { startCheckout, isPreparing, error } = useCheckout();
+    const label = `Beli course ini · ${formatRupiah(price)}`;
+
+    if (!auth.user) {
+        return (
+            <Button asChild size="lg" variant="outline" className="w-full">
+                <Link href={register()}>{label}</Link>
+            </Button>
+        );
+    }
+
+    return (
+        <div className="space-y-2">
+            <Button
+                size="lg"
+                variant="outline"
+                className="w-full"
+                disabled={isPreparing}
+                onClick={() =>
+                    startCheckout(CheckoutController.course.url(slug))
+                }
+            >
+                {isPreparing ? 'Menyiapkan pembayaran...' : label}
+            </Button>
+            {error && (
+                <p role="alert" className="text-sm text-destructive">
+                    {error}
+                </p>
+            )}
+        </div>
     );
 }

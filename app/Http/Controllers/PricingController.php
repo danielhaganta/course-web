@@ -15,7 +15,7 @@ class PricingController extends Controller
             ->orderBy('sort_order')
             ->get()
             ->map(fn (Plan $plan): array => $plan->only([
-                'id', 'name', 'description', 'price', 'duration_days', 'can_access_exclusive', 'can_download',
+                'id', 'name', 'slug', 'description', 'price', 'duration_days', 'can_access_exclusive', 'can_download',
             ]));
 
         return Inertia::render('pricing', [

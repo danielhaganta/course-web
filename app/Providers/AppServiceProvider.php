@@ -2,7 +2,10 @@
 
 namespace App\Providers;
 
+use App\Models\Course;
+use App\Models\Plan;
 use Carbon\CarbonImmutable;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -26,6 +29,12 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->configureDefaults();
         $this->configureLargeUploads();
+
+        // Disimpan di orders.purchasable_type, jangan diubah setelah ada data
+        Relation::morphMap([
+            'plan' => Plan::class,
+            'course' => Course::class,
+        ]);
     }
 
     /**

@@ -1,6 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { Check, X } from 'lucide-react';
 import { useState } from 'react';
+import CheckoutController from '@/actions/App/Http/Controllers/CheckoutController';
 import { Button } from '@/components/ui/button';
 import {
     Card,
@@ -11,6 +12,7 @@ import {
     CardTitle,
 } from '@/components/ui/card';
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
+import { useCheckout } from '@/hooks/use-checkout';
 import { formatRupiah } from '@/lib/currency';
 import { cn } from '@/lib/utils';
 import { register } from '@/routes';
@@ -148,11 +150,32 @@ function PlanCard({ plan, isGuest }: { plan: Plan; isGuest: boolean }) {
                         <Link href={register()}>Pilih paket</Link>
                     </Button>
                 ) : (
-                    <Button className="w-full" disabled>
-                        Pembayaran segera tersedia
-                    </Button>
+                    <CheckoutButton plan={plan} />
                 )}
             </CardFooter>
         </Card>
+    );
+}
+
+function CheckoutButton({ plan }: { plan: Plan }) {
+    const { startCheckout, isPreparing, error } = useCheckout();
+
+    return (
+        <div className="w-full space-y-2">
+            <Button
+                className="w-full"
+                disabled={isPreparing}
+                onClick={() =>
+                    startCheckout(CheckoutController.plan.url(plan.slug))
+                }
+            >
+                {isPreparing ? 'Menyiapkan pembayaran...' : 'Pilih paket'}
+            </Button>
+            {error && (
+                <p role="alert" className="text-sm text-destructive">
+                    {error}
+                </p>
+            )}
+        </div>
     );
 }
