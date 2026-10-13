@@ -33,7 +33,7 @@ export default function CoursePoster({ course, titleAs: Title = 'h2' }: Props) {
             <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/40 to-transparent" />
 
             <div className="absolute inset-x-5 bottom-5">
-                <Title className="font-display text-[38px] leading-[0.95] font-extrabold uppercase">
+                <Title className="font-display text-[38px] leading-[0.95] font-extrabold [overflow-wrap:anywhere] uppercase">
                     {course.title}
                 </Title>
                 <p className="mt-3 text-[13px] text-foreground-soft">

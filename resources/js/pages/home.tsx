@@ -4,7 +4,6 @@ import type { MouseEvent, ReactNode } from 'react';
 import BeforeAfterSlider from '@/components/before-after-slider';
 import FilmStrip from '@/components/film-strip';
 import type { Still } from '@/components/film-strip';
-import RevealSection from '@/components/reveal-section';
 import Showreel from '@/components/showreel';
 import { Button } from '@/components/ui/button';
 import { BEFORE_AFTER_EXAMPLES } from '@/lib/before-after-examples';
@@ -33,24 +32,6 @@ const STILLS: Still[] = [
     { src: null, tone: 'hue-rotate(-12deg) saturate(.5)' },
 ];
 
-const STEPS = [
-    {
-        title: 'Join',
-        description:
-            'Pick a plan or a single course and start watching right away.',
-    },
-    {
-        title: 'Watch and practice with real footage',
-        description:
-            'Follow each lesson step by step on footage shot for real projects.',
-    },
-    {
-        title: 'Grade your own projects',
-        description:
-            'Take the workflow into your own edits and build looks you can repeat.',
-    },
-];
-
 export default function Home({ maxDevices }: Props) {
     return (
         <>
@@ -64,9 +45,8 @@ export default function Home({ maxDevices }: Props) {
 
             <Hero />
 
-            <div className="mx-auto w-full max-w-6xl space-y-28 px-4 py-24 md:space-y-40 md:py-32">
+            <div className="mx-auto w-full max-w-6xl px-4 pt-24 pb-24 md:pt-32 md:pb-32">
                 <BeforeAfterPreview />
-                <HowItWorks />
                 <Faq maxDevices={maxDevices} />
                 <FinalCallToAction />
             </div>
@@ -138,27 +118,14 @@ function Hero() {
     );
 }
 
-function SectionHeading({
-    id,
-    eyebrow,
-    children,
-}: {
-    id: string;
-    eyebrow: string;
-    children: ReactNode;
-}) {
+function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
     return (
-        <div>
-            <p className="text-[13px] font-semibold tracking-[0.22em] text-muted-foreground uppercase">
-                {eyebrow}
-            </p>
-            <h2
-                id={id}
-                className="mt-4 font-display text-[clamp(44px,5.5vw,84px)] leading-[0.88] font-black uppercase"
-            >
-                {children}
-            </h2>
-        </div>
+        <h2
+            id={id}
+            className="font-display text-[clamp(44px,5.5vw,84px)] leading-[0.88] font-black uppercase"
+        >
+            {children}
+        </h2>
     );
 }
 
@@ -166,16 +133,13 @@ function BeforeAfterPreview() {
     const example = BEFORE_AFTER_EXAMPLES[0];
 
     return (
-        <RevealSection
+        <section
             id={BEFORE_AFTER_SECTION_ID}
             aria-labelledby="before-after-preview-title"
             className="scroll-mt-8"
         >
             <div className="flex flex-wrap items-end justify-between gap-6">
-                <SectionHeading
-                    id="before-after-preview-title"
-                    eyebrow="Before / after"
-                >
+                <SectionHeading id="before-after-preview-title">
                     Drag. See the difference.
                 </SectionHeading>
                 <Button asChild variant="outline">
@@ -189,33 +153,7 @@ function BeforeAfterPreview() {
                 isCompact
                 className="mt-10 aspect-[4/5] rounded-[2px] sm:aspect-video"
             />
-        </RevealSection>
-    );
-}
-
-function HowItWorks() {
-    return (
-        <RevealSection aria-labelledby="how-it-works-title">
-            <SectionHeading id="how-it-works-title" eyebrow="How it works">
-                Learn by doing
-            </SectionHeading>
-            <ol className="mt-10 grid gap-10 border-t pt-8 md:grid-cols-3 md:gap-8">
-                {STEPS.map((step, index) => (
-                    <li key={step.title}>
-                        <span
-                            aria-hidden
-                            className="font-display text-xl font-extrabold text-muted-foreground"
-                        >
-                            {String(index + 1).padStart(2, '0')}
-                        </span>
-                        <h3 className="mt-3 text-xl font-bold">{step.title}</h3>
-                        <p className="mt-2 leading-relaxed text-foreground-soft">
-                            {step.description}
-                        </p>
-                    </li>
-                ))}
-            </ol>
-        </RevealSection>
+        </section>
     );
 }
 
@@ -249,13 +187,11 @@ function Faq({ maxDevices }: { maxDevices: number }) {
     ];
 
     return (
-        <RevealSection
+        <section
             aria-labelledby="faq-title"
-            className="grid gap-10 md:grid-cols-[1fr_1.4fr] md:gap-14"
+            className="mt-32 grid gap-10 md:mt-48 md:grid-cols-[1fr_1.4fr] md:gap-14"
         >
-            <SectionHeading id="faq-title" eyebrow="FAQ">
-                Questions
-            </SectionHeading>
+            <SectionHeading id="faq-title">Questions</SectionHeading>
             <div className="border-t">
                 {questions.map((item) => (
                     <details key={item.question} className="group border-b">
@@ -272,25 +208,25 @@ function Faq({ maxDevices }: { maxDevices: number }) {
                     </details>
                 ))}
             </div>
-        </RevealSection>
+        </section>
     );
 }
 
 function FinalCallToAction() {
     return (
-        <RevealSection
+        <section
             aria-labelledby="final-cta-title"
-            className="border-t pt-20 text-center md:pt-28"
+            className="mt-24 flex flex-col gap-10 border-t pt-16 md:mt-32 md:flex-row md:items-end md:justify-between md:pt-20"
         >
             <h2
                 id="final-cta-title"
-                className="mx-auto max-w-[14ch] font-display text-[clamp(56px,8vw,128px)] leading-[0.85] font-black uppercase"
+                className="max-w-[14ch] min-w-0 font-display text-[clamp(56px,8vw,128px)] leading-[0.85] font-black uppercase"
             >
                 Your next grade starts here.
             </h2>
-            <Button asChild size="lg" className="mt-10">
+            <Button asChild size="lg" className="self-start md:self-auto">
                 <Link href={pricing()}>Start learning</Link>
             </Button>
-        </RevealSection>
+        </section>
     );
 }

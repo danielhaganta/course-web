@@ -1,7 +1,7 @@
 import { Head, Link, usePage } from '@inertiajs/react';
 import { useState } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import CheckoutController from '@/actions/App/Http/Controllers/CheckoutController';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useCheckout } from '@/hooks/use-checkout';
 import { formatRupiah } from '@/lib/currency';
@@ -67,6 +67,7 @@ export default function Pricing({ plans, maxDevices }: Props) {
         (plan) => isYearly(plan) === (billing === 'yearly'),
     );
     const savingsPercent = yearlySavingsPercent(plans);
+    const devices = `Up to ${pluralize(maxDevices, 'device')}`;
 
     return (
         <>
@@ -78,14 +79,16 @@ export default function Pricing({ plans, maxDevices }: Props) {
                 />
             </Head>
 
-            <section className="mx-auto max-w-3xl text-center">
-                <h1 className="font-display text-[clamp(56px,8vw,96px)] leading-[0.92] font-extrabold uppercase">
-                    Choose your plan
-                </h1>
-                <p className="mx-auto mt-5 max-w-[560px] text-lg leading-relaxed text-foreground-soft">
-                    A subscription unlocks every course. Access stays active
-                    until your subscription ends.
-                </p>
+            <section className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
+                <div className="max-w-2xl">
+                    <h1 className="font-display text-[clamp(56px,8vw,96px)] leading-[0.92] font-extrabold uppercase">
+                        Choose your plan
+                    </h1>
+                    <p className="mt-5 max-w-[560px] text-lg leading-relaxed text-foreground-soft">
+                        A subscription unlocks every course. Access stays active
+                        until your subscription ends.
+                    </p>
+                </div>
                 <BillingToggle
                     billing={billing}
                     onChange={setBilling}
@@ -93,40 +96,115 @@ export default function Pricing({ plans, maxDevices }: Props) {
                 />
             </section>
 
-            {visiblePlans.length === 0 ? (
-                <p className="mx-auto mt-12 max-w-[1000px] rounded-md border border-dashed p-8 text-center text-muted-foreground">
+            {visiblePlans.length === 0 && (
+                <p className="mt-12 rounded-md border border-dashed p-8 text-center text-muted-foreground">
                     No plans available yet.
                 </p>
-            ) : (
-                <section
-                    aria-label="Subscription plans"
-                    className="mx-auto mt-12 grid max-w-[1000px] gap-6 md:grid-cols-2"
-                >
-                    {visiblePlans.map((plan) => (
-                        <PlanCard
-                            key={plan.id}
-                            plan={plan}
-                            isHighlighted={isComplete(plan)}
-                            isGuest={!auth.user}
-                        />
-                    ))}
-                </section>
             )}
 
-            <section className="mx-auto mt-6 flex max-w-[1000px] flex-wrap items-center justify-between gap-5 rounded-md border border-dashed border-foreground/25 px-6 py-7 sm:px-8">
-                <div>
-                    <h2 className="text-xl font-bold">Only need one course?</h2>
-                    <p className="mt-1.5 text-muted-foreground">
-                        Buy it on its own, pay once, and keep it forever. Prices
-                        are on each course page.
-                    </p>
-                </div>
-                <Button asChild variant="outline">
-                    <Link href={coursesIndex()}>Browse courses</Link>
-                </Button>
+            {/* Satu kolom per penawaran, termasuk beli satuan */}
+            <section
+                aria-label="Plans and single purchase"
+                style={
+                    {
+                        '--offer-count': visiblePlans.length + 1,
+                    } as CSSProperties
+                }
+                className="mt-12 grid border-t md:grid-cols-[repeat(var(--offer-count),minmax(0,1fr))]"
+            >
+                {visiblePlans.map((plan) => {
+                    const isHighlighted = isComplete(plan);
+
+                    return (
+                        <OfferColumn
+                            key={plan.id}
+                            name={plan.name}
+                            description={plan.description}
+                            price={formatRupiah(plan.price)}
+                            period={periodLabel(plan)}
+                            isHighlighted={isHighlighted}
+                            features={[
+                                { label: 'Every course', isIncluded: true },
+                                {
+                                    label: 'Access while subscribed',
+                                    isIncluded: true,
+                                },
+                                {
+                                    label: plan.can_access_exclusive
+                                        ? 'Exclusive lessons'
+                                        : 'No exclusive lessons',
+                                    isIncluded: plan.can_access_exclusive,
+                                },
+                                {
+                                    label: plan.can_download
+                                        ? 'Practice file downloads'
+                                        : 'No practice file downloads',
+                                    isIncluded: plan.can_download,
+                                },
+                                { label: devices, isIncluded: true },
+                            ]}
+                            action={
+                                auth.user ? (
+                                    <CheckoutButton
+                                        plan={plan}
+                                        isHighlighted={isHighlighted}
+                                    />
+                                ) : (
+                                    <Button
+                                        asChild
+                                        size="lg"
+                                        variant={
+                                            isHighlighted
+                                                ? 'default'
+                                                : 'outline'
+                                        }
+                                        className="w-full"
+                                    >
+                                        <Link href={register()}>
+                                            Choose {plan.name}
+                                        </Link>
+                                    </Button>
+                                )
+                            }
+                        />
+                    );
+                })}
+
+                <OfferColumn
+                    name="Single course"
+                    description="Only need one course? Buy it on its own."
+                    price="Pay once"
+                    period="Price on each course page"
+                    features={[
+                        {
+                            label: 'One course of your choice',
+                            isIncluded: true,
+                        },
+                        { label: 'Yours forever', isIncluded: true },
+                        { label: 'No exclusive lessons', isIncluded: false },
+                        {
+                            label: 'No practice file downloads',
+                            isIncluded: false,
+                        },
+                        { label: devices, isIncluded: true },
+                    ]}
+                    action={
+                        <Button
+                            asChild
+                            size="lg"
+                            variant="outline"
+                            className="w-full"
+                        >
+                            <Link href={coursesIndex()}>Browse courses</Link>
+                        </Button>
+                    }
+                />
             </section>
 
-            <ComparisonTable plans={visiblePlans} maxDevices={maxDevices} />
+            <p className="mt-6 text-sm text-muted-foreground">
+                Every option saves your learning progress. Pay with QRIS, bank
+                virtual account, GoPay, or ShopeePay.
+            </p>
         </>
     );
 }
@@ -155,7 +233,7 @@ function BillingToggle({
         <div
             role="group"
             aria-label="Billing period"
-            className="mt-9 inline-flex gap-1 rounded-md border bg-secondary p-1"
+            className="inline-flex gap-1 self-start rounded-md border bg-secondary p-1 md:self-auto"
         >
             {options.map((option) => {
                 const isActive = billing === option.value;
@@ -181,79 +259,65 @@ function BillingToggle({
     );
 }
 
-function PlanCard({
-    plan,
-    isHighlighted,
-    isGuest,
-}: {
-    plan: Plan;
-    isHighlighted: boolean;
-    isGuest: boolean;
-}) {
-    const benefits = [
-        { label: 'All regular course videos', isIncluded: true },
-        { label: 'Saved learning progress', isIncluded: true },
-        {
-            label: plan.can_access_exclusive
-                ? 'Exclusive lessons'
-                : 'No exclusive lessons',
-            isIncluded: plan.can_access_exclusive,
-        },
-        {
-            label: plan.can_download
-                ? 'Practice file downloads'
-                : 'No practice file downloads',
-            isIncluded: plan.can_download,
-        },
-    ];
+type Feature = {
+    label: string;
+    isIncluded: boolean;
+};
 
+/**
+ * Satu kolom penawaran. Di desktop baris-barisnya disejajarkan antar kolom lewat subgrid:
+ * 3 baris (nama, harga, tombol) + 5 baris fitur = row-span-8. Jumlah fitur harus 5.
+ */
+function OfferColumn({
+    name,
+    description,
+    price,
+    period,
+    features,
+    action,
+    isHighlighted = false,
+}: {
+    name: string;
+    description: string | null;
+    price: string;
+    period: string;
+    features: Feature[];
+    action: ReactNode;
+    isHighlighted?: boolean;
+}) {
     return (
-        <div
+        <article
             className={cn(
-                'flex flex-col rounded-md bg-secondary p-7 sm:p-9',
-                isHighlighted ? 'border-2 border-foreground' : 'border',
+                'flex flex-col border-b px-5 py-8 md:row-span-8 md:grid md:grid-rows-subgrid md:border-b-0 md:border-l md:px-8 md:first:border-l-0',
+                isHighlighted && 'bg-secondary',
             )}
         >
-            <div className="flex items-center justify-between gap-3">
-                <h2 className="text-2xl font-bold">{plan.name}</h2>
-                {isHighlighted && <Badge>Most complete</Badge>}
+            <div>
+                <h2 className="text-2xl font-bold">{name}</h2>
+                {description && (
+                    <p className="mt-2 text-muted-foreground">{description}</p>
+                )}
             </div>
-            {plan.description && (
-                <p className="mt-2 text-muted-foreground">{plan.description}</p>
-            )}
-            <p className="mt-7 font-display text-[56px] leading-none font-extrabold">
-                {formatRupiah(plan.price)}
-            </p>
-            <p className="mt-1.5 text-sm text-muted-foreground">
-                {periodLabel(plan)}
-            </p>
-            <ul className="mt-7 flex-1 space-y-3 text-[15px]">
-                {benefits.map((benefit) => (
+            <div className="mt-7">
+                <p className="font-display text-[56px] leading-none font-extrabold tabular-nums">
+                    {price}
+                </p>
+                <p className="mt-1.5 text-sm text-muted-foreground">{period}</p>
+            </div>
+            <div className="mt-7">{action}</div>
+            <ul className="mt-8 space-y-3 text-[15px] md:row-span-5 md:grid md:grid-rows-subgrid md:space-y-0 md:gap-y-3">
+                {features.map((feature) => (
                     <li
-                        key={benefit.label}
+                        key={feature.label}
                         className={cn(
-                            !benefit.isIncluded && 'text-foreground/40',
+                            !feature.isIncluded && 'text-foreground/40',
                         )}
                     >
-                        {benefit.label}
+                        {feature.label}
                     </li>
                 ))}
             </ul>
-            <div className="mt-8">
-                {isGuest ? (
-                    <Button
-                        asChild
-                        size="lg"
-                        variant={isHighlighted ? 'default' : 'outline'}
-                        className="w-full"
-                    >
-                        <Link href={register()}>Choose {plan.name}</Link>
-                    </Button>
-                ) : (
-                    <CheckoutButton plan={plan} isHighlighted={isHighlighted} />
-                )}
-            </div>
-        </div>
+        </article>
     );
 }
 
@@ -277,7 +341,7 @@ function CheckoutButton({
                     startCheckout(CheckoutController.plan.url(plan.slug))
                 }
             >
-                {isPreparing ? 'Preparing payment...' : `Choose ${plan.name}`}
+                {isPreparing ? 'Preparing payment…' : `Choose ${plan.name}`}
             </Button>
             {error && (
                 <p role="alert" className="text-sm text-destructive">
@@ -285,101 +349,5 @@ function CheckoutButton({
                 </p>
             )}
         </div>
-    );
-}
-
-function ComparisonTable({
-    plans,
-    maxDevices,
-}: {
-    plans: Plan[];
-    maxDevices: number;
-}) {
-    const yesNo = (value: boolean) => (value ? 'Yes' : 'No');
-    const rows = [
-        {
-            label: 'Courses you can watch',
-            single: 'The purchased course',
-            plan: () => 'All',
-        },
-        {
-            label: 'Access period',
-            single: 'Lifetime',
-            plan: () => 'While subscribed',
-        },
-        {
-            label: 'Exclusive lessons',
-            single: 'No',
-            plan: (plan: Plan) => yesNo(plan.can_access_exclusive),
-        },
-        {
-            label: 'Practice file downloads',
-            single: 'No',
-            plan: (plan: Plan) => yesNo(plan.can_download),
-        },
-        {
-            label: 'Devices',
-            single: pluralize(maxDevices, 'device'),
-            plan: () => pluralize(maxDevices, 'device'),
-        },
-    ];
-
-    return (
-        <section
-            aria-labelledby="comparison-title"
-            className="mx-auto mt-24 max-w-[1000px]"
-        >
-            <h2
-                id="comparison-title"
-                className="font-display text-5xl font-extrabold uppercase"
-            >
-                Full comparison
-            </h2>
-            {/* Di HP tabel bisa digeser ke samping */}
-            <div className="mt-6 overflow-x-auto rounded-md border">
-                <table className="w-full min-w-[620px] border-collapse text-left text-[15px]">
-                    <thead className="bg-secondary">
-                        <tr>
-                            <th scope="col" className="px-5 py-4 font-semibold">
-                                Feature
-                            </th>
-                            <th scope="col" className="px-5 py-4 font-semibold">
-                                Single purchase
-                            </th>
-                            {plans.map((plan) => (
-                                <th
-                                    key={plan.id}
-                                    scope="col"
-                                    className="px-5 py-4 font-semibold"
-                                >
-                                    {plan.name}
-                                </th>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {rows.map((row) => (
-                            <tr key={row.label} className="border-t">
-                                <th
-                                    scope="row"
-                                    className="px-5 py-4 font-normal text-foreground-soft"
-                                >
-                                    {row.label}
-                                </th>
-                                <td className="px-5 py-4">{row.single}</td>
-                                {plans.map((plan) => (
-                                    <td key={plan.id} className="px-5 py-4">
-                                        {row.plan(plan)}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-            <p className="mt-5 text-sm text-muted-foreground">
-                Pay with QRIS, bank virtual account, GoPay, or ShopeePay.
-            </p>
-        </section>
     );
 }

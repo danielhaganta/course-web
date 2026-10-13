@@ -59,7 +59,7 @@ export default function CourseShow({ course }: Props) {
 
             <div className="grid items-start gap-10 lg:grid-cols-[1fr_380px] lg:gap-14">
                 <div className="min-w-0">
-                    <h1 className="font-display text-[clamp(48px,6vw,84px)] leading-[0.92] font-extrabold uppercase">
+                    <h1 className="font-display text-[clamp(48px,6vw,84px)] leading-[0.92] font-extrabold [overflow-wrap:anywhere] uppercase">
                         {course.title}
                     </h1>
                     {course.summary && (
@@ -133,7 +133,7 @@ function Stat({ label, value }: { label: string; value: string | number }) {
     return (
         <div className="flex flex-col-reverse">
             <dt className="mt-1 text-[13px] text-muted-foreground">{label}</dt>
-            <dd className="font-display text-[40px] leading-none font-extrabold">
+            <dd className="font-display text-[40px] leading-none font-extrabold tabular-nums">
                 {value}
             </dd>
         </div>
@@ -258,7 +258,7 @@ function BuyCourseButton({ slug, price }: { slug: string; price: number }) {
                     startCheckout(CheckoutController.course.url(slug))
                 }
             >
-                {isPreparing ? 'Preparing payment...' : label}
+                {isPreparing ? 'Preparing payment…' : label}
             </Button>
             {error && (
                 <p role="alert" className="text-sm text-destructive">

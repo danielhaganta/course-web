@@ -1,6 +1,5 @@
 import { Head } from '@inertiajs/react';
 import BeforeAfterSlider from '@/components/before-after-slider';
-import RevealSection from '@/components/reveal-section';
 import { BEFORE_AFTER_EXAMPLES } from '@/lib/before-after-examples';
 import { cn } from '@/lib/utils';
 
@@ -29,7 +28,7 @@ export default function BeforeAfter() {
 
                 <div className="grid gap-x-6 gap-y-12 md:grid-cols-2">
                     {BEFORE_AFTER_EXAMPLES.map((example, index) => (
-                        <RevealSection
+                        <section
                             key={example.title}
                             aria-labelledby={`example-${index}-title`}
                             // Contoh pertama selebar halaman sebagai pembuka
@@ -51,7 +50,7 @@ export default function BeforeAfter() {
                             >
                                 {example.title}
                             </h2>
-                        </RevealSection>
+                        </section>
                     ))}
                 </div>
             </div>

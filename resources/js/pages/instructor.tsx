@@ -55,7 +55,7 @@ export default function Instructor() {
                     </p>
                     <h1
                         id="instructor-title"
-                        className="mt-4 max-w-[10ch] font-display text-[clamp(56px,6vw,104px)] leading-[0.85] font-black uppercase"
+                        className="mt-4 max-w-[10ch] font-display text-[clamp(56px,6vw,104px)] leading-[0.85] font-black [overflow-wrap:anywhere] uppercase"
                     >
                         {INSTRUCTOR.name}
                     </h1>

@@ -30,8 +30,8 @@ type MenuItem = {
     matchChildren?: boolean;
 };
 
+// Tanpa Home, wordmark sudah menjadi link ke beranda
 const MENU: MenuItem[] = [
-    { label: 'Home', href: home() },
     { label: 'Course', href: coursesIndex(), matchChildren: true },
     { label: 'Instructor', href: instructor() },
     { label: 'Pricing', href: pricing() },
@@ -42,14 +42,15 @@ export default function SiteHeader() {
     const closeMenu = () => setMenuOpen(false);
 
     return (
-        <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between gap-8 bg-gradient-to-b from-background/85 to-transparent px-6 py-4 lg:px-10">
+        // Pill mengambang selebar isinya, terpisah dari tepi layar
+        <header className="fixed top-4 left-1/2 z-30 flex w-max max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-6 rounded-full border bg-background/75 py-1.5 pr-1.5 pl-5 backdrop-blur-md lg:gap-8">
             <Wordmark />
 
             <nav aria-label="Main menu" className="hidden lg:block">
-                <MenuLinks className="flex gap-7" />
+                <MenuLinks className="flex gap-6" />
             </nav>
 
-            <div className="hidden items-center gap-5 lg:flex">
+            <div className="hidden items-center gap-4 lg:flex">
                 <AccountActions />
             </div>
 
@@ -58,7 +59,7 @@ export default function SiteHeader() {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="lg:hidden"
+                        className="size-11 rounded-full lg:hidden"
                         aria-label="Open menu"
                     >
                         <Menu className="size-6" />
@@ -94,7 +95,7 @@ function Wordmark() {
             href={home()}
             className="flex items-baseline gap-2 rounded-[2px] outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
         >
-            <span className="font-display text-3xl font-black tracking-[0.08em]">
+            <span className="font-display text-2xl font-black tracking-[0.08em]">
                 POEIMA
             </span>
             <span className="text-xs tracking-[0.14em] text-muted-foreground uppercase">
@@ -129,10 +130,10 @@ function MenuLinks({
                             onClick={onNavigate}
                             aria-current={isActive ? 'page' : undefined}
                             className={cn(
-                                'inline-flex min-h-11 items-center border-b-2 py-3 text-[13px] font-semibold tracking-[0.14em] uppercase transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring',
+                                'inline-flex min-h-11 items-center text-[13px] font-semibold tracking-[0.14em] whitespace-nowrap uppercase decoration-2 underline-offset-[6px] transition-colors outline-none focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring',
                                 isActive
-                                    ? 'border-foreground text-foreground'
-                                    : 'border-transparent text-muted-foreground hover:text-foreground',
+                                    ? 'text-foreground underline'
+                                    : 'text-muted-foreground hover:text-foreground',
                                 itemClassName,
                             )}
                         >
@@ -154,11 +155,11 @@ function AccountActions({ onNavigate }: { onNavigate?: () => void }) {
                 <Link
                     href={login()}
                     onClick={onNavigate}
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="text-sm whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
                 >
                     Log in
                 </Link>
-                <Button asChild>
+                <Button asChild className="rounded-full">
                     <Link href={register()} onClick={onNavigate}>
                         Join
                     </Link>
@@ -173,12 +174,12 @@ function AccountActions({ onNavigate }: { onNavigate?: () => void }) {
                 // Panel Filament bukan halaman Inertia
                 <a
                     href={adminDashboard.url()}
-                    className="text-sm text-muted-foreground transition-colors hover:text-foreground"
+                    className="text-sm whitespace-nowrap text-muted-foreground transition-colors hover:text-foreground"
                 >
                     Admin panel
                 </a>
             )}
-            <Button asChild>
+            <Button asChild className="rounded-full">
                 <Link href={dashboard()} onClick={onNavigate}>
                     Dashboard
                 </Link>
