@@ -4,8 +4,11 @@ import SiteFooter from '@/components/site-footer';
 import SiteHeader from '@/components/site-header';
 import { cn } from '@/lib/utils';
 
-// Halaman satu layar penuh di desktop, header melayang di atas gambar
-const FULLSCREEN_PAGES = ['home', 'before-after', 'instructor'];
+// Tanpa container, header melayang di atas gambar
+const FULL_BLEED_PAGES = ['home', 'instructor'];
+
+// Satu layar penuh di desktop dan tidak di-scroll
+const SINGLE_SCREEN_PAGES = ['instructor'];
 
 /**
  * Layout persisten: header tidak dimuat ulang saat pindah halaman,
@@ -13,7 +16,7 @@ const FULLSCREEN_PAGES = ['home', 'before-after', 'instructor'];
  */
 export default function PublicLayout({ children }: { children: ReactNode }) {
     const { component, url } = usePage();
-    const isFullscreen = FULLSCREEN_PAGES.includes(component);
+    const isFullBleed = FULL_BLEED_PAGES.includes(component);
 
     return (
         <div className="relative flex min-h-dvh flex-col overflow-x-clip bg-background text-foreground">
@@ -22,14 +25,18 @@ export default function PublicLayout({ children }: { children: ReactNode }) {
                 key={url}
                 className={cn(
                     'flex-1 motion-safe:animate-page-enter',
-                    !isFullscreen &&
+                    !isFullBleed &&
                         'mx-auto w-full max-w-6xl px-4 pt-28 pb-12 md:pt-32 md:pb-16',
                 )}
             >
                 {children}
             </main>
-            {/* Di desktop halaman layar penuh tidak di-scroll, footer cukup di halaman lain */}
-            <SiteFooter className={cn(isFullscreen && 'lg:hidden')} />
+            {/* Footer cukup di halaman yang di-scroll */}
+            <SiteFooter
+                className={cn(
+                    SINGLE_SCREEN_PAGES.includes(component) && 'lg:hidden',
+                )}
+            />
         </div>
     );
 }

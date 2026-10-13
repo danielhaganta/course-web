@@ -13,7 +13,6 @@ import {
 import { useCurrentUrl } from '@/hooks/use-current-url';
 import { cn } from '@/lib/utils';
 import {
-    beforeAfter,
     dashboard,
     home,
     instructor,
@@ -33,7 +32,6 @@ type MenuItem = {
 
 const MENU: MenuItem[] = [
     { label: 'Home', href: home() },
-    { label: 'Before / After', href: beforeAfter() },
     { label: 'Course', href: coursesIndex(), matchChildren: true },
     { label: 'Instructor', href: instructor() },
     { label: 'Pricing', href: pricing() },

@@ -9,11 +9,17 @@ export type ComparisonImage = {
     src: string | null;
     alt: string;
     label: string;
+    // CSS filter untuk variasi warna placeholder
+    tone?: string;
 };
 
 type Props = {
     before: ComparisonImage;
     after: ComparisonImage;
+    // Nama pembanding untuk pembaca layar, wajib dibedakan kalau ada beberapa slider di satu halaman
+    label?: string;
+    // Label Before/After rapat ke tepi, untuk slider yang tidak tertutup header
+    isCompact?: boolean;
     className?: string;
 };
 
@@ -22,7 +28,13 @@ const KEYBOARD_PAGE_STEP = 10;
 
 const clamp = (value: number) => Math.min(100, Math.max(0, value));
 
-export default function BeforeAfterSlider({ before, after, className }: Props) {
+export default function BeforeAfterSlider({
+    before,
+    after,
+    label,
+    isCompact = false,
+    className,
+}: Props) {
     const containerRef = useRef<HTMLDivElement>(null);
     const isDragging = useRef(false);
     const [position, setPosition] = useState(50);
@@ -91,10 +103,22 @@ export default function BeforeAfterSlider({ before, after, className }: Props) {
                 <ComparisonFrame image={after} look="graded" />
             </div>
 
-            <FrameLabel className="left-6 lg:left-10">
+            <FrameLabel
+                className={
+                    isCompact
+                        ? 'top-4 left-4'
+                        : 'top-24 left-6 lg:top-28 lg:left-10'
+                }
+            >
                 {before.label}
             </FrameLabel>
-            <FrameLabel className="right-6 lg:right-10">
+            <FrameLabel
+                className={
+                    isCompact
+                        ? 'top-4 right-4'
+                        : 'top-24 right-6 lg:top-28 lg:right-10'
+                }
+            >
                 {after.label}
             </FrameLabel>
 
@@ -105,7 +129,10 @@ export default function BeforeAfterSlider({ before, after, className }: Props) {
                 <div
                     role="slider"
                     tabIndex={0}
-                    aria-label={`Drag to compare ${before.label.toLowerCase()} and ${after.label.toLowerCase()}`}
+                    aria-label={
+                        label ??
+                        `Drag to compare ${before.label.toLowerCase()} and ${after.label.toLowerCase()}`
+                    }
                     aria-valuemin={0}
                     aria-valuemax={100}
                     aria-valuenow={Math.round(position)}
@@ -128,7 +155,13 @@ function ComparisonFrame({
     look: 'log' | 'graded';
 }) {
     if (!image.src) {
-        return <FootagePlaceholder look={look} className="absolute inset-0" />;
+        return (
+            <FootagePlaceholder
+                look={look}
+                tone={image.tone}
+                className="absolute inset-0"
+            />
+        );
     }
 
     return (
@@ -151,7 +184,7 @@ function FrameLabel({
     return (
         <span
             className={cn(
-                'pointer-events-none absolute top-24 rounded-[3px] bg-background/50 px-2 py-1.5 text-xs font-medium tracking-[0.04em] text-foreground lg:top-28',
+                'pointer-events-none absolute rounded-[3px] bg-background/50 px-2 py-1.5 text-xs font-medium tracking-[0.04em] text-foreground',
                 className,
             )}
         >

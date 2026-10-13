@@ -4,6 +4,7 @@ use App\Http\Controllers\AttachmentController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\CourseController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\LessonController;
 use App\Http\Controllers\LessonProgressController;
 use App\Http\Controllers\MidtransWebhookController;
@@ -11,7 +12,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PricingController;
 use Illuminate\Support\Facades\Route;
 
-Route::inertia('/', 'home')->name('home');
+Route::get('/', HomeController::class)->name('home');
 Route::inertia('before-after', 'before-after')->name('before-after');
 Route::inertia('instructor', 'instructor')->name('instructor');
 
