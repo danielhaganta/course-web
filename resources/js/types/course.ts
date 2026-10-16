@@ -23,6 +23,9 @@ export type CourseSummary = {
     thumbnail_url: string | null;
     lessons_count: number;
     duration_seconds: number;
+    // Null = tidak dijual satuan
+    price: number | null;
+    has_preview: boolean;
     // Null kalau belum login atau tidak punya akses ke course ini
     completed_lessons_count: number | null;
 };

@@ -289,7 +289,9 @@ function OfferColumn({
         <article
             className={cn(
                 'flex flex-col border-b px-5 py-8 md:row-span-8 md:grid md:grid-rows-subgrid md:border-b-0 md:border-l md:px-8 md:first:border-l-0',
-                isHighlighted && 'bg-secondary',
+                // Garis atas tebal menandai paket terlengkap
+                isHighlighted &&
+                    'bg-secondary shadow-[inset_0_2px_0_var(--foreground)]',
             )}
         >
             <div>

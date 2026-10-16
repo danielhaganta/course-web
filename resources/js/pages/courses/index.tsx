@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import CoursePoster from '@/components/course-poster';
+import { cn } from '@/lib/utils';
 import type { CourseSummary } from '@/types';
 
 type Props = {
@@ -33,7 +34,13 @@ export default function CoursesIndex({ courses }: Props) {
                         No courses available yet.
                     </p>
                 ) : (
-                    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    <ul
+                        // Dua course atau kurang tampil lebih besar supaya grid tidak kosong sepertiga
+                        className={cn(
+                            'grid gap-6 sm:grid-cols-2',
+                            courses.length > 2 && 'lg:grid-cols-3',
+                        )}
+                    >
                         {courses.map((course) => (
                             <li key={course.slug}>
                                 <CoursePoster course={course} />

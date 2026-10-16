@@ -1,6 +1,7 @@
 import { Link } from '@inertiajs/react';
 import FootagePlaceholder from '@/components/footage-placeholder';
 import ProgressBar from '@/components/progress-bar';
+import { formatRupiah } from '@/lib/currency';
 import { formatDuration } from '@/lib/duration';
 import { pluralize } from '@/lib/utils';
 import { show } from '@/routes/courses';
@@ -30,7 +31,8 @@ export default function CoursePoster({ course, titleAs: Title = 'h2' }: Props) {
                     <FootagePlaceholder look="graded" tone="saturate(.6)" />
                 )}
             </div>
-            <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/40 to-transparent" />
+            {/* Cukup pekat di bawah supaya judul tetap terbaca di atas thumbnail yang ramai */}
+            <div className="absolute inset-0 bg-gradient-to-t from-background from-15% via-background/80 via-45% to-transparent to-80%" />
 
             <div className="absolute inset-x-5 bottom-5">
                 <Title className="font-display text-[38px] leading-[0.95] font-extrabold [overflow-wrap:anywhere] uppercase">
@@ -39,7 +41,15 @@ export default function CoursePoster({ course, titleAs: Title = 'h2' }: Props) {
                 <p className="mt-3 text-[13px] text-foreground-soft">
                     {pluralize(course.lessons_count, 'lesson')} ·{' '}
                     {formatDuration(course.duration_seconds)}
+                    {course.has_preview && ' · Free preview'}
                 </p>
+                {course.completed_lessons_count === null && (
+                    <p className="mt-1 text-[13px] text-muted-foreground">
+                        {course.price === null
+                            ? 'Included in membership'
+                            : `In membership, or ${formatRupiah(course.price)} once`}
+                    </p>
+                )}
                 {course.completed_lessons_count !== null && (
                     <div className="mt-4 space-y-2">
                         <p className="text-xs font-semibold tracking-[0.12em] uppercase">

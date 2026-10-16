@@ -6,53 +6,27 @@ export type BeforeAfterExample = {
     after: ComparisonImage;
 };
 
-/**
- * Placeholder sampai ada cuplikan asli. Ganti src dengan path gambar di public/,
- * misalnya '/media/before-after/portrait-before.jpg', lalu hapus tone.
- * Contoh pertama juga tampil di beranda.
- */
+const pair = (
+    number: number,
+    title: string,
+    scene: string,
+): BeforeAfterExample => ({
+    title,
+    before: {
+        src: `/media/before-after/${number}-before.jpg`,
+        alt: `${scene} in log footage before grading`,
+        label: 'Before',
+    },
+    after: {
+        src: `/media/before-after/${number}-after.jpg`,
+        alt: `The same ${scene.toLowerCase()} after grading`,
+        label: 'After',
+    },
+});
+
+// File di public/media/before-after, nomor 1 juga tampil di beranda
 export const BEFORE_AFTER_EXAMPLES: BeforeAfterExample[] = [
-    {
-        title: 'Warm portrait',
-        before: {
-            src: null,
-            alt: 'Portrait in log footage before grading',
-            label: 'Before',
-        },
-        after: {
-            src: null,
-            alt: 'The same portrait after a warm grade',
-            label: 'After',
-        },
-    },
-    {
-        title: 'Teal night street',
-        before: {
-            src: null,
-            alt: 'Night street in log footage before grading',
-            label: 'Before',
-            tone: 'brightness(.8)',
-        },
-        after: {
-            src: null,
-            alt: 'The same street after a teal night grade',
-            label: 'After',
-            tone: 'hue-rotate(160deg) saturate(.6) brightness(.75)',
-        },
-    },
-    {
-        title: 'Faded film look',
-        before: {
-            src: null,
-            alt: 'Outdoor scene in log footage before grading',
-            label: 'Before',
-            tone: 'brightness(1.05)',
-        },
-        after: {
-            src: null,
-            alt: 'The same scene after a faded film grade',
-            label: 'After',
-            tone: 'sepia(.45) saturate(.55) contrast(.9)',
-        },
-    },
+    pair(1, 'Morning commute', 'Train platform'),
+    pair(2, 'Empty station at night', 'Station'),
+    pair(3, 'Behind the bar', 'Bartender close-up'),
 ];

@@ -166,6 +166,21 @@
     }
 }
 
+/*
+ * Autofill Chrome memberi latar biru yang bentrok dengan palet.
+ * Perubahan warna latar ditunda sangat lama supaya tidak pernah tampil; box-shadow tidak disentuh agar focus ring tetap ada.
+ * Sengaja di luar @layer supaya menang dari utility transition milik Input.
+ */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    -webkit-text-fill-color: var(--foreground);
+    caret-color: var(--foreground);
+    transition-property: background-color, color;
+    /* !important supaya tidak ditimpa aturan prefers-reduced-motion di bawah */
+    transition-duration: 600000s !important;
+}
+
 /* Semua animasi dan transisi dimatikan untuk pengguna yang memilih kurangi gerakan */
 @media (prefers-reduced-motion: reduce) {
     *,

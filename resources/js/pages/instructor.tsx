@@ -50,12 +50,9 @@ export default function Instructor() {
                 </div>
 
                 <div className="flex flex-col justify-end px-6 py-12 lg:flex-1 lg:px-14 lg:pt-28 lg:pb-12">
-                    <p className="text-[13px] font-semibold tracking-[0.22em] uppercase">
-                        Instructor
-                    </p>
                     <h1
                         id="instructor-title"
-                        className="mt-4 max-w-[10ch] font-display text-[clamp(56px,6vw,104px)] leading-[0.85] font-black [overflow-wrap:anywhere] uppercase"
+                        className="max-w-[10ch] font-display text-[clamp(56px,6vw,104px)] leading-[0.85] font-black [overflow-wrap:anywhere] uppercase"
                     >
                         {INSTRUCTOR.name}
                     </h1>

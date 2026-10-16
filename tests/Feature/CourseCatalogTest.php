@@ -55,3 +55,18 @@ test('course detail shows access and price for the current user', function () {
         ->get(route('courses.show', $course))
         ->assertInertia(fn (Assert $page) => $page->where('course.can_access', true));
 });
+
+test('course index shows the price and whether a free preview exists', function () {
+    $course = Course::factory()->published()->create(['price' => 149_000]);
+    $section = Section::factory()->for($course)->create();
+    Lesson::factory()->for($section)->create();
+    Lesson::factory()->for($section)->create(['is_preview' => true]);
+    Course::factory()->published()->create(['price' => null, 'sort_order' => 99]);
+
+    $this->get(route('courses.index'))
+        ->assertInertia(fn (Assert $page) => $page
+            ->where('courses.0.price', 149_000)
+            ->where('courses.0.has_preview', true)
+            ->where('courses.1.price', null)
+            ->where('courses.1.has_preview', false));
+});

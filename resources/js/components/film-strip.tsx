@@ -59,7 +59,7 @@ export default function FilmStrip({ stills, className }: Props) {
                 size="icon"
                 aria-label={isPaused ? 'Play film strip' : 'Pause film strip'}
                 onClick={() => setPaused(!isPaused)}
-                className="absolute right-6 bottom-9 size-11 rounded-full bg-background/80 hover:bg-background motion-reduce:hidden lg:right-10"
+                className="absolute right-6 bottom-9 size-11 bg-background/80 hover:bg-background motion-reduce:hidden lg:right-10"
             >
                 {isPaused ? (
                     <Play aria-hidden className="size-4 fill-current" />

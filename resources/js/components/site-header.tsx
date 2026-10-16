@@ -1,7 +1,7 @@
 import { Link, usePage } from '@inertiajs/react';
 import type { InertiaLinkProps } from '@inertiajs/react';
 import { Menu } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
     Sheet,
@@ -37,13 +37,43 @@ const MENU: MenuItem[] = [
     { label: 'Pricing', href: pricing() },
 ];
 
+// Jarak scroll sebelum header boleh disembunyikan
+const HIDE_AFTER_SCROLL_Y = 80;
+
+// Sembunyi saat scroll ke bawah supaya tidak menutupi judul, muncul lagi saat scroll ke atas
+function useHideOnScrollDown(): boolean {
+    const [isHidden, setHidden] = useState(false);
+
+    useEffect(() => {
+        let lastScrollY = window.scrollY;
+
+        const handleScroll = () => {
+            const scrollY = window.scrollY;
+            setHidden(scrollY > lastScrollY && scrollY > HIDE_AFTER_SCROLL_Y);
+            lastScrollY = scrollY;
+        };
+
+        window.addEventListener('scroll', handleScroll, { passive: true });
+
+        return () => window.removeEventListener('scroll', handleScroll);
+    }, []);
+
+    return isHidden;
+}
+
 export default function SiteHeader() {
     const [isMenuOpen, setMenuOpen] = useState(false);
     const closeMenu = () => setMenuOpen(false);
+    const isHidden = useHideOnScrollDown();
 
     return (
-        // Pill mengambang selebar isinya, terpisah dari tepi layar
-        <header className="fixed top-4 left-1/2 z-30 flex w-max max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-6 rounded-full border bg-background/75 py-1.5 pr-1.5 pl-5 backdrop-blur-md lg:gap-8">
+        // Bar mengambang selebar isinya. Tetap tampil kalau fokus keyboard ada di dalamnya.
+        <header
+            className={cn(
+                'fixed top-4 left-1/2 z-30 flex w-max max-w-[calc(100%-2rem)] -translate-x-1/2 items-center gap-6 rounded-lg border bg-background/90 py-1.5 pr-1.5 pl-4 backdrop-blur-md transition-transform duration-300 ease-out focus-within:translate-y-0 lg:gap-8',
+                isHidden && '-translate-y-[150%]',
+            )}
+        >
             <Wordmark />
 
             <nav aria-label="Main menu" className="hidden lg:block">
@@ -59,7 +89,7 @@ export default function SiteHeader() {
                     <Button
                         variant="ghost"
                         size="icon"
-                        className="size-11 rounded-full lg:hidden"
+                        className="size-11 lg:hidden"
                         aria-label="Open menu"
                     >
                         <Menu className="size-6" />
@@ -159,7 +189,7 @@ function AccountActions({ onNavigate }: { onNavigate?: () => void }) {
                 >
                     Log in
                 </Link>
-                <Button asChild className="rounded-full">
+                <Button asChild>
                     <Link href={register()} onClick={onNavigate}>
                         Join
                     </Link>
@@ -179,7 +209,7 @@ function AccountActions({ onNavigate }: { onNavigate?: () => void }) {
                     Admin panel
                 </a>
             )}
-            <Button asChild className="rounded-full">
+            <Button asChild>
                 <Link href={dashboard()} onClick={onNavigate}>
                     Dashboard
                 </Link>

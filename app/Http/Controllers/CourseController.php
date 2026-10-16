@@ -23,10 +23,12 @@ class CourseController extends Controller
             ->orderBy('sort_order')
             ->withCount('lessons')
             ->withSum('lessons', 'duration_seconds')
+            ->withExists(['lessons as has_preview' => fn ($query) => $query->where('is_preview', true)])
             ->get()
             ->map(fn (Course $course): array => [
-                ...$course->only(['title', 'slug', 'summary', 'thumbnail_url', 'lessons_count']),
+                ...$course->only(['title', 'slug', 'summary', 'thumbnail_url', 'lessons_count', 'price']),
                 'duration_seconds' => (int) $course->getAttribute('lessons_sum_duration_seconds'),
+                'has_preview' => (bool) $course->getAttribute('has_preview'),
                 // Null kalau user belum login atau tidak punya akses ke course ini
                 'completed_lessons_count' => $user && $access->canAccessCourse($user, $course)
                     ? (int) ($completedCounts[$course->id] ?? 0)

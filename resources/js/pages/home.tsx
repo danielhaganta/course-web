@@ -7,32 +7,35 @@ import type { Still } from '@/components/film-strip';
 import Showreel from '@/components/showreel';
 import { Button } from '@/components/ui/button';
 import { BEFORE_AFTER_EXAMPLES } from '@/lib/before-after-examples';
-import { pluralize } from '@/lib/utils';
+import { formatDuration } from '@/lib/duration';
+import { cn, pluralize } from '@/lib/utils';
 import { beforeAfter, pricing } from '@/routes';
+
+type Catalog = {
+    courses: number;
+    lessons: number;
+    duration_seconds: number;
+};
 
 type Props = {
     maxDevices: number;
+    catalog: Catalog;
 };
 
 const BEFORE_AFTER_SECTION_ID = 'before-after-preview';
 
-// Ganti dengan file di public/, misalnya '/media/showreel.mp4', saat video sudah ada
+// Hasil kompres dari file asli di public/media, tanpa audio
 const SHOWREEL = {
-    videoSrc: null,
-    posterSrc: null,
+    videoSrc: '/media/showreel.mp4',
+    // Frame pertama video, supaya tidak berubah saat video mulai diputar
+    posterSrc: '/media/showreel-poster.jpg',
 };
 
-// Placeholder pita cuplikan, nanti diganti still dari karya pengajar
-const STILLS: Still[] = [
-    { src: null, tone: 'saturate(.7)' },
-    { src: null, tone: 'hue-rotate(160deg) saturate(.35) brightness(.8)' },
-    { src: null, tone: 'grayscale(.7) brightness(.85)' },
-    { src: null, tone: 'sepia(.35) saturate(.6)' },
-    { src: null, tone: 'brightness(.65) contrast(1.15)' },
-    { src: null, tone: 'hue-rotate(-12deg) saturate(.5)' },
-];
+const STILLS: Still[] = Array.from({ length: 6 }, (_, index) => ({
+    src: `/media/stills/still-${index + 1}.jpg`,
+}));
 
-export default function Home({ maxDevices }: Props) {
+export default function Home({ maxDevices, catalog }: Props) {
     return (
         <>
             <Head title="DaVinci Resolve color grading course">
@@ -43,7 +46,7 @@ export default function Home({ maxDevices }: Props) {
                 />
             </Head>
 
-            <Hero />
+            <Hero catalog={catalog} />
 
             <div className="mx-auto w-full max-w-6xl px-4 pt-24 pb-24 md:pt-32 md:pb-32">
                 <BeforeAfterPreview />
@@ -72,7 +75,7 @@ function scrollToBeforeAfter(event: MouseEvent<HTMLAnchorElement>) {
     });
 }
 
-function Hero() {
+function Hero({ catalog }: { catalog: Catalog }) {
     return (
         <section
             aria-labelledby="home-title"
@@ -98,6 +101,17 @@ function Hero() {
                     <br />
                     tells stories.
                 </h1>
+                {catalog.courses > 0 && (
+                    <p className="mt-7 max-w-[480px] text-lg leading-relaxed text-foreground-soft">
+                        <span className="font-semibold text-foreground tabular-nums">
+                            {pluralize(catalog.courses, 'course')} ·{' '}
+                            {pluralize(catalog.lessons, 'lesson')} ·{' '}
+                            {formatDuration(catalog.duration_seconds)}
+                        </span>
+                        . Step by step, from flat log footage to the finished
+                        grade.
+                    </p>
+                )}
                 <div className="mt-9 flex flex-wrap items-center gap-4">
                     <Button asChild size="lg">
                         <Link href={pricing()}>Start learning</Link>
@@ -118,11 +132,22 @@ function Hero() {
     );
 }
 
-function SectionHeading({ id, children }: { id: string; children: ReactNode }) {
+function SectionHeading({
+    id,
+    className,
+    children,
+}: {
+    id: string;
+    className?: string;
+    children: ReactNode;
+}) {
     return (
         <h2
             id={id}
-            className="font-display text-[clamp(44px,5.5vw,84px)] leading-[0.88] font-black uppercase"
+            className={cn(
+                'font-display text-[clamp(44px,5.5vw,84px)] leading-[0.88] font-black uppercase',
+                className,
+            )}
         >
             {children}
         </h2>
@@ -191,7 +216,13 @@ function Faq({ maxDevices }: { maxDevices: number }) {
             aria-labelledby="faq-title"
             className="mt-32 grid gap-10 md:mt-48 md:grid-cols-[1fr_1.4fr] md:gap-14"
         >
-            <SectionHeading id="faq-title">Questions</SectionHeading>
+            <SectionHeading
+                id="faq-title"
+                // Judul ikut turun selama daftar pertanyaan di-scroll
+                className="md:sticky md:top-28 md:self-start"
+            >
+                Questions
+            </SectionHeading>
             <div className="border-t">
                 {questions.map((item) => (
                     <details key={item.question} className="group border-b">
