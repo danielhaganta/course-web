@@ -30,7 +30,7 @@ export default function WatchLayout({ children }: { children: ReactNode }) {
                             href={home()}
                             className="font-display text-[26px] font-extrabold tracking-[0.06em]"
                         >
-                            POEIMA
+                            POIEMA
                         </Link>
                         <Link
                             href={showCourse(course.slug)}

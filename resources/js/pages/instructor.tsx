@@ -20,7 +20,7 @@ export default function Instructor() {
                 <meta
                     head-key="description"
                     name="description"
-                    content="Meet the Poeima Academy instructor: their background as a colorist and the projects they have worked on."
+                    content="Meet the Poiema Academy instructor: their background as a colorist and the projects they have worked on."
                 />
             </Head>
 

@@ -7,7 +7,7 @@ export default function AppLogo() {
             </span>
             <span className="flex items-baseline gap-2 group-data-[collapsible=icon]:hidden">
                 <span className="font-display text-2xl font-black tracking-[0.08em]">
-                    POEIMA
+                    POIEMA
                 </span>
                 <span className="text-[11px] tracking-[0.14em] text-muted-foreground uppercase">
                     Academy

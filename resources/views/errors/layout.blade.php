@@ -19,7 +19,7 @@
     <body class="bg-background font-sans text-foreground antialiased">
         <main class="flex min-h-svh flex-col items-center justify-center px-6 py-16 text-center">
             <a href="{{ url('/') }}" class="flex items-baseline gap-2">
-                <span class="font-display text-3xl font-black tracking-[0.08em]">POEIMA</span>
+                <span class="font-display text-3xl font-black tracking-[0.08em]">POIEMA</span>
                 <span class="text-xs tracking-[0.14em] text-muted-foreground uppercase">Academy</span>
             </a>
 

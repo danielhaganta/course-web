@@ -14,7 +14,7 @@ export default function CoursesIndex({ courses }: Props) {
                 <meta
                     head-key="description"
                     name="description"
-                    content="Color grading courses at Poeima Academy. Pick a course to see its curriculum and free preview lessons."
+                    content="Color grading courses at Poiema Academy. Pick a course to see its curriculum and free preview lessons."
                 />
             </Head>
 

@@ -75,7 +75,7 @@ export default function Pricing({ plans, maxDevices }: Props) {
                 <meta
                     head-key="description"
                     name="description"
-                    content="Choose a Poeima Academy plan to unlock every color grading course, or buy a single course."
+                    content="Choose a Poiema Academy plan to unlock every color grading course, or buy a single course."
                 />
             </Head>
 

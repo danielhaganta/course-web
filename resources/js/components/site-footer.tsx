@@ -16,7 +16,7 @@ export default function SiteFooter({ className }: { className?: string }) {
                 className,
             )}
         >
-            <p>© {new Date().getFullYear()} Poeima Academy</p>
+            <p>© {new Date().getFullYear()} Poiema Academy</p>
             <nav aria-label="Information">
                 <ul className="flex flex-wrap gap-x-6 gap-y-2">
                     {LINKS.map((link) => (

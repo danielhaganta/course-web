@@ -10,7 +10,7 @@ export default function BeforeAfter() {
                 <meta
                     head-key="description"
                     name="description"
-                    content="Drag to compare log footage with the graded result from the Poeima Academy instructor's work."
+                    content="Drag to compare log footage with the graded result from the Poiema Academy instructor's work."
                 />
             </Head>
 
